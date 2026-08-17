@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+build/
+dist/
+*.zip
+
+# WordPress
+wp-config.php
+.env
+.env.*
+
+# Editors
+.idea/
+.vscode/
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+debug.log
