@@ -68,9 +68,10 @@ Yes. Arabic and English interface modes are built in, with automatic RTL layout.
 
 == Screenshots ==
 
-1. Customer overview with the active order in focus.
-2. Template Studio with the live preview.
-3. Mobile bottom bar studio.
+1. Template portal with a live preview of the Service & Booking journey.
+2. The same store on the Beauty & Wellness journey — layout, modules and palette all change.
+3. Brand and visual system: logo source, palette tokens, radius, content width and text scale.
+4. Customer journey controls for the account home-screen modules.
 
 == Changelog ==
 

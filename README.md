@@ -9,6 +9,8 @@ An application-style, mobile-first WooCommerce customer hub that replaces the st
 
 Developed by **[Sky Athena Kft.](https://skyathena.com)**
 
+![Template portal with a live preview of the Service & Booking journey](docs/screenshots/screenshot-1.png)
+
 ---
 
 ## Why
@@ -36,6 +38,20 @@ Woo Account Studio rebuilds that page around the thing the customer actually cam
 **Branding** — the site logo by default, or a custom Media Library logo, or initials-only mode.
 
 **Theme title suppression** — an optional switch that removes the oversized My Account title/hero created by common themes and page builders, without touching the hub's own content.
+
+## Screenshots
+
+**Pick a journey, watch it change.** The same store, the same data — a different post-purchase experience. Selecting Beauty & Wellness reshapes the layout, the modules and the palette, not just the accent colour.
+
+![Template portal with the Beauty & Wellness journey selected](docs/screenshots/screenshot-2.png)
+
+**Brand and visual system.** Inherit the site identity or take full control: logo source, palette tokens, corner radius, content width and text scale — with every change reflected in the preview before you save.
+
+![Brand and visual system panel with the live preview alongside](docs/screenshots/screenshot-3.png)
+
+**Customer journey modules.** Decide which blocks appear on the account home screen, and override the welcome copy.
+
+![Customer journey module controls](docs/screenshots/screenshot-4.png)
 
 ## Requirements
 
