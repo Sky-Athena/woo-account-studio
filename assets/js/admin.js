@@ -18,20 +18,45 @@ jQuery(function ($) {
   }
   function previewLanguage() {
     var mode = value('language_mode', 'auto');
-    return mode === 'ar' ? 'ar' : (mode === 'auto' && window.wcasStudio ? window.wcasStudio.autoLanguage : 'en');
+    return mode === 'auto' ? ((window.wcasStudio && window.wcasStudio.autoLanguage) || 'en') : mode;
+  }
+  function customLinkField(index, key) {
+    return form && form.querySelector('[name="wcas_settings[custom_links][' + index + '][' + key + ']"]');
+  }
+  function customLinkValue(index, key, fallback) {
+    var input = customLinkField(index, key);
+    if (!input) return fallback || '';
+    return input.type === 'checkbox' ? input.checked : input.value;
+  }
+  function customLinksPayload() {
+    var links = [];
+    for (var index = 0; index < 6; index += 1) {
+      links.push({
+        enabled: customLinkValue(index, 'enabled', false),
+        label: customLinkValue(index, 'label', ''),
+        url: customLinkValue(index, 'url', ''),
+        iconSource: customLinkValue(index, 'icon_source', 'builtin'),
+        iconName: customLinkValue(index, 'icon_name', 'star'),
+        iconify: customLinkValue(index, 'iconify', ''),
+        iconUrl: customLinkValue(index, 'icon_url', ''),
+        newTab: customLinkValue(index, 'new_tab', false)
+      });
+    }
+    return links;
   }
   function previewPayload() {
     var logoSource = value('logo_source', 'site');
     return {
       template: selectedTemplate(),
       language: previewLanguage(),
-      appearance: value('appearance', 'light'), navigation: value('navigation', 'sidebar'), mobileNav: value('mobile_nav', 'dock'), mobileNavStyle: value('mobile_nav_style', 'glass'), mobileNavLabels: value('mobile_nav_labels', true), mobileIconStyle: value('mobile_icon_style', 'line'), hidePageTitle: value('hide_page_title', false),
+      appearance: value('appearance', 'light'), navigation: value('navigation', 'sidebar'), mobileNav: value('mobile_nav', 'dock'), mobileNavStyle: value('mobile_nav_style', 'glass'), mobileNavLabels: value('mobile_nav_labels', true), mobileIconStyle: value('mobile_icon_style', 'line'), mobileActiveStyle: value('mobile_active_style', 'none'), hidePageTitle: value('hide_theme_hero', false), hideThemeHero: value('hide_theme_hero', false), themeHeroSelector: value('theme_hero_selector', ''),
       radius: value('radius', 22), width: value('content_width', 1060), scale: value('font_scale', 100), motion: value('enable_motion', true),
       brandName: value('brand_name', ''), brandTagline: value('brand_tagline', ''), heroTitle: value('hero_title', ''), heroDescription: value('hero_description', ''), logoSource: logoSource,
       logoUrl: logoSource === 'upload' && document.querySelector('#wcas-logo-preview img') ? document.querySelector('#wcas-logo-preview img').src : '',
       mobileIcons: { dashboard: value('mobile_icon_dashboard', 'grid'), orders: value('mobile_icon_orders', 'bag'), library: value('mobile_icon_library', 'download'), addresses: value('mobile_icon_addresses', 'pin'), profile: value('mobile_icon_profile', 'user'), more: value('mobile_icon_more', 'user') },
       labels: { dashboard: value('label_dashboard', ''), orders: value('label_orders', ''), library: value('label_library', ''), addresses: value('label_addresses', ''), profile: value('label_profile', ''), more: value('label_more', '') },
       modules: { order: value('show_order_focus', true), story: value('show_template_story', true), actions: value('show_action_cards', true), rewards: value('show_rewards', true) },
+      customLinks: customLinksPayload(),
       colors: { primary: value('primary', '#5e5ce6'), accent: value('accent', '#ff785a'), bg: value('background', '#f5f6fa'), surface: value('surface', '#ffffff'), ink: value('text', '#172036'), sidebar: value('sidebar', '#101523') }
     };
   }
@@ -88,7 +113,8 @@ jQuery(function ($) {
       event.preventDefault();
       if (!window.wp || !wp.media) return;
       if (mediaFrame) { mediaFrame.open(); return; }
-      mediaFrame = wp.media({ title: 'Select logo', button: { text: 'Use this logo' }, multiple: false });
+      var strings = (window.wcasStudio && window.wcasStudio.strings) || {};
+      mediaFrame = wp.media({ title: strings.selectLogo || 'Select logo', button: { text: strings.useThisLogo || 'Use this logo' }, multiple: false });
       mediaFrame.on('select', function () { var attachment = mediaFrame.state().get('selection').first().toJSON(); $('#wcas-logo-id').val(attachment.id); $('#wcas-logo-preview').html('<img src="' + attachment.url + '" alt="">'); sendPreview(); });
       mediaFrame.open();
     });

@@ -5,6 +5,9 @@ defined( 'ABSPATH' ) || exit;
 final class WCAS_Plugin {
 	private static $instance;
 	private $option_key = 'wcas_settings';
+	/* Avoid re-entering config() when WordPress asks for a translated label while
+	 * the settings array is being normalised. */
+	private $resolving_interface_language = false;
 
 	public static function instance() {
 		if ( ! self::$instance ) self::$instance = new self();
@@ -21,6 +24,7 @@ final class WCAS_Plugin {
 		add_filter( 'woocommerce_locate_template', array( $this, 'template' ), 30, 3 );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 		add_filter( 'gettext', array( $this, 'builtin_arabic' ), 20, 3 );
+		add_filter( 'ngettext', array( $this, 'builtin_plural_translation' ), 20, 5 );
 	}
 
 	public static function activate() { flush_rewrite_rules(); }
@@ -29,7 +33,7 @@ final class WCAS_Plugin {
 	public function defaults() {
 		return array(
 			'enabled' => 'yes', 'experience' => 'commerce', 'language_mode' => 'auto', 'appearance' => 'light', 'mobile_nav' => 'dock',
-			'mobile_nav_style' => 'glass', 'mobile_nav_labels' => 'yes', 'mobile_icon_style' => 'line', 'hide_page_title' => 'no',
+			'mobile_nav_style' => 'glass', 'mobile_nav_labels' => 'yes', 'mobile_icon_style' => 'line', 'mobile_active_style' => 'none', 'hide_page_title' => 'no', 'hide_theme_hero' => 'no', 'theme_hero_selector' => '',
 			'mobile_icon_dashboard' => 'grid', 'mobile_icon_orders' => 'bag', 'mobile_icon_library' => 'download', 'mobile_icon_addresses' => 'pin', 'mobile_icon_profile' => 'user', 'mobile_icon_more' => 'user',
 			'logo_source' => 'site', 'logo_id' => 0, 'brand_name' => get_bloginfo( 'name' ), 'brand_tagline' => '',
 			'primary' => '#5e5ce6', 'accent' => '#ff785a', 'background' => '#f5f6fa', 'surface' => '#ffffff',
@@ -38,13 +42,113 @@ final class WCAS_Plugin {
 			'show_order_focus' => 'yes', 'show_action_cards' => 'yes', 'show_rewards' => 'yes', 'show_recommendations' => 'yes', 'show_template_story' => 'yes',
 			'enable_motion' => 'yes', 'custom_css' => '',
 			'label_dashboard' => '', 'label_orders' => '', 'label_library' => '', 'label_addresses' => '', 'label_profile' => '', 'label_more' => '',
+			'custom_links' => $this->custom_link_defaults(),
 		);
 	}
 	public function config() {
-		$config = wp_parse_args( (array) get_option( $this->option_key, array() ), $this->defaults() );
+		$stored = (array) get_option( $this->option_key, array() );
+		$config = wp_parse_args( $stored, $this->defaults() );
+		// Preserve the v3.2 title toggle for existing stores while the stronger hero
+		// control is introduced. Saving the new control writes both fields.
+		if ( ! array_key_exists( 'hide_theme_hero', $stored ) && 'yes' === ( $config['hide_page_title'] ?? 'no' ) ) $config['hide_theme_hero'] = 'yes';
+		$config['custom_links'] = $this->normalise_custom_links( $config['custom_links'] ?? array() );
 		$preview_template = $this->preview_template();
 		if ( $preview_template ) $config['experience'] = $preview_template;
 		return $config;
+	}
+	/** Default shape for one persistent customer-facing link. */
+	public function custom_link_defaults() {
+		return array(
+			'enabled' => 'no',
+			'label' => '',
+			'url' => '',
+			'icon_source' => 'builtin',
+			'icon_name' => 'star',
+			'iconify' => '',
+			'icon_url' => '',
+			'new_tab' => 'no',
+		);
+	}
+	/**
+	 * Keep a predictable six-slot structure even when settings were saved by an
+	 * older version or manually altered in the database.
+	 */
+	private function normalise_custom_links( $links ) {
+		$links = is_array( $links ) ? array_values( $links ) : array();
+		$normalised = array();
+		for ( $index = 0; $index < 6; $index++ ) $normalised[] = $this->normalise_custom_link( $links[ $index ] ?? array() );
+		return $normalised;
+	}
+	private function normalise_custom_link( $link ) {
+		$defaults = $this->custom_link_defaults();
+		$link = is_array( $link ) ? $link : array();
+		$out = $defaults;
+		$enabled = is_scalar( $link['enabled'] ?? null ) ? (string) $link['enabled'] : '';
+		$label = is_scalar( $link['label'] ?? null ) ? (string) $link['label'] : '';
+		$url = is_scalar( $link['url'] ?? null ) ? (string) $link['url'] : '';
+		$icon_source = is_scalar( $link['icon_source'] ?? null ) ? (string) $link['icon_source'] : '';
+		$icon_name = is_scalar( $link['icon_name'] ?? null ) ? (string) $link['icon_name'] : '';
+		$iconify = is_scalar( $link['iconify'] ?? null ) ? (string) $link['iconify'] : '';
+		$icon_url = is_scalar( $link['icon_url'] ?? null ) ? (string) $link['icon_url'] : '';
+		$new_tab = is_scalar( $link['new_tab'] ?? null ) ? (string) $link['new_tab'] : '';
+		$out['enabled'] = '' !== $enabled && 'no' !== $enabled ? 'yes' : 'no';
+		$out['label'] = sanitize_text_field( $label );
+		$out['url'] = esc_url_raw( $url );
+		$out['icon_source'] = in_array( $icon_source, array( 'builtin', 'iconify', 'url' ), true ) ? $icon_source : $defaults['icon_source'];
+		$icon_options = $this->custom_link_icon_options();
+		$out['icon_name'] = isset( $icon_options[ $icon_name ] ) ? $icon_name : $defaults['icon_name'];
+		$out['iconify'] = $this->sanitize_iconify_name( $iconify );
+		$out['icon_url'] = esc_url_raw( $icon_url, array( 'https' ) );
+		$out['new_tab'] = '' !== $new_tab && 'no' !== $new_tab ? 'yes' : 'no';
+		return $out;
+	}
+	private function sanitize_iconify_name( $icon ) {
+		$icon = is_scalar( $icon ) ? strtolower( trim( sanitize_text_field( (string) $icon ) ) ) : '';
+		return preg_match( '/^[a-z0-9][a-z0-9-]{0,63}:[a-z0-9][a-z0-9-]{0,127}$/', $icon ) ? $icon : '';
+	}
+	/** A safe, curated icon list for persistent navigation links. */
+	public function custom_link_icon_options() {
+		return $this->mobile_icon_options() + array(
+			'help' => __( 'Help', 'woo-account-studio' ),
+			'chevron' => __( 'Arrow', 'woo-account-studio' ),
+			'box' => __( 'Box', 'woo-account-studio' ),
+		);
+	}
+	/** Returns only valid, enabled persistent links for customer-facing output. */
+	public function custom_links() {
+		$links = $this->normalise_custom_links( $this->config()['custom_links'] ?? array() );
+		return array_values( array_filter( $links, function( $link ) {
+			return 'yes' === $link['enabled'] && '' !== $link['label'] && '' !== $link['url'];
+		} ) );
+	}
+	public function custom_link_icon( $link, $size = 20 ) {
+		$link = $this->normalise_custom_link( $link );
+		if ( 'builtin' === $link['icon_source'] ) return $this->icon( $link['icon_name'], $size );
+		$source = '';
+		if ( 'iconify' === $link['icon_source'] && ! empty( $link['iconify'] ) ) $source = 'https://api.iconify.design/' . $link['iconify'] . '.svg';
+		if ( 'url' === $link['icon_source'] ) $source = $link['icon_url'];
+		if ( ! $source ) return $this->icon( 'star', $size );
+		return '<img class="wcas-external-icon wcas-custom-link-image" src="' . esc_url( $source ) . '" width="' . absint( $size ) . '" height="' . absint( $size ) . '" alt="" aria-hidden="true" loading="lazy" decoding="async">';
+	}
+	/** Render saved links in their natural desktop, More-page or mobile-sheet home. */
+	public function render_custom_links( $context = 'sidebar' ) {
+		$links = $this->custom_links();
+		$context = in_array( $context, array( 'sidebar', 'more', 'sheet' ), true ) ? $context : 'sidebar';
+		$hidden = $links ? '' : ' hidden';
+		if ( 'sidebar' === $context ) echo '<nav class="wcas-custom-links wcas-custom-links--sidebar" data-wcas-custom-links="sidebar" aria-label="' . esc_attr__( 'Saved links', 'woo-account-studio' ) . '"' . $hidden . '>';
+		if ( 'more' === $context ) echo '<div class="wcas-more-group wcas-custom-links-group" data-wcas-custom-links="more"' . $hidden . '><h2>' . esc_html__( 'Saved links', 'woo-account-studio' ) . '</h2><section class="wcas-more-list wcas-custom-links">';
+		if ( 'sheet' === $context ) echo '<div class="wcas-sheet-group wcas-custom-links-group" data-wcas-custom-links="sheet"' . $hidden . '><span>' . esc_html__( 'Saved links', 'woo-account-studio' ) . '</span><div class="wcas-custom-links">';
+		foreach ( $links as $link ) $this->render_custom_link( $link, $context );
+		if ( 'sidebar' === $context ) echo '</nav>';
+		if ( 'more' === $context ) echo '</section></div>';
+		if ( 'sheet' === $context ) echo '</div></div>';
+	}
+	private function render_custom_link( $link, $context ) {
+		$target = 'yes' === $link['new_tab'] ? ' target="_blank" rel="noopener noreferrer"' : '';
+		echo '<a class="wcas-custom-link" href="' . esc_url( $link['url'] ) . '"' . $target . '>' . $this->custom_link_icon( $link );
+		if ( 'sheet' === $context ) echo '<b>' . esc_html( $link['label'] ) . '</b>' . $this->icon( 'chevron' );
+		else echo '<span>' . esc_html( $link['label'] ) . '</span>' . ( 'sidebar' === $context ? '' : $this->icon( 'chevron' ) );
+		echo '</a>';
 	}
 	public function active() { $s = $this->config(); return 'yes' === $s['enabled']; }
 	public function presets() {
@@ -66,7 +170,7 @@ final class WCAS_Plugin {
 		$s = $this->config();
 		wp_enqueue_style( 'wcas-hub', WCAS_URL . 'assets/css/hub.css', array(), WCAS_VERSION );
 		wp_enqueue_script( 'wcas-hub', WCAS_URL . 'assets/js/hub.js', array(), WCAS_VERSION, true );
-		wp_localize_script( 'wcas-hub', 'wcasHub', array( 'motion' => 'yes' === $s['enable_motion'] ) );
+		wp_localize_script( 'wcas-hub', 'wcasHub', array( 'motion' => 'yes' === $s['enable_motion'], 'themeHeroSelector' => $s['theme_hero_selector'] ) );
 		wp_add_inline_style( 'wcas-hub', sprintf( '.wcas-app{--hub-primary:%1$s;--hub-accent:%2$s;--hub-bg:%3$s;--hub-surface:%4$s;--hub-ink:%5$s;--hub-sidebar:%6$s;--hub-radius:%7$dpx;--hub-content-width:%8$dpx;--hub-scale:%9$.2f;}%10$s', esc_attr( $s['primary'] ), esc_attr( $s['accent'] ), esc_attr( $s['background'] ), esc_attr( $s['surface'] ), esc_attr( $s['text'] ), esc_attr( $s['sidebar'] ), absint( $s['radius'] ), absint( $s['content_width'] ), max( 0.85, min( 1.2, absint( $s['font_scale'] ) / 100 ) ), $s['custom_css'] ) );
 	}
 	public function admin_assets( $hook ) {
@@ -74,13 +178,21 @@ final class WCAS_Plugin {
 		wp_enqueue_media();
 		wp_enqueue_style( 'wcas-admin', WCAS_URL . 'assets/css/admin.css', array(), WCAS_VERSION );
 		wp_enqueue_script( 'wcas-admin', WCAS_URL . 'assets/js/admin.js', array( 'jquery' ), WCAS_VERSION, true );
-		wp_localize_script( 'wcas-admin', 'wcasStudio', array( 'autoLanguage' => $this->use_arabic() ? 'ar' : 'en' ) );
+		wp_localize_script( 'wcas-admin', 'wcasStudio', array(
+			'autoLanguage' => WCAS_Translation_Packs::from_locale( determine_locale() ),
+			'strings'      => array(
+				'selectLogo'    => __( 'Select logo', 'woo-account-studio' ),
+				'useThisLogo'   => __( 'Use this logo', 'woo-account-studio' ),
+			),
+		) );
 	}
 	public function body_class( $classes ) {
 		if ( function_exists( 'is_account_page' ) && is_account_page() && is_user_logged_in() && $this->active() ) {
 			$config = $this->config();
-			$classes[] = 'wcas-hub-page'; $classes[] = 'wcas-experience-' . sanitize_html_class( $config['experience'] ); $classes[] = 'wcas-nav-' . sanitize_html_class( $config['navigation'] ); $classes[] = 'wcas-appearance-' . sanitize_html_class( $config['appearance'] ); $classes[] = 'wcas-mobile-nav-' . sanitize_html_class( $config['mobile_nav'] ); $classes[] = 'wcas-mobile-style-' . sanitize_html_class( $config['mobile_nav_style'] ); $classes[] = 'wcas-mobile-labels-' . sanitize_html_class( $config['mobile_nav_labels'] ); $classes[] = 'wcas-mobile-icons-' . sanitize_html_class( $config['mobile_icon_style'] );
+			$classes[] = 'wcas-hub-page'; $classes[] = 'wcas-experience-' . sanitize_html_class( $config['experience'] ); $classes[] = 'wcas-nav-' . sanitize_html_class( $config['navigation'] ); $classes[] = 'wcas-appearance-' . sanitize_html_class( $config['appearance'] ); $classes[] = 'wcas-mobile-nav-' . sanitize_html_class( $config['mobile_nav'] ); $classes[] = 'wcas-mobile-style-' . sanitize_html_class( $config['mobile_nav_style'] ); $classes[] = 'wcas-mobile-labels-' . sanitize_html_class( $config['mobile_nav_labels'] ); $classes[] = 'wcas-mobile-icons-' . sanitize_html_class( $config['mobile_icon_style'] ); $classes[] = 'wcas-mobile-active-' . sanitize_html_class( $config['mobile_active_style'] );
 			if ( 'yes' === $config['hide_page_title'] ) $classes[] = 'wcas-hide-page-title';
+			if ( 'yes' === $config['hide_theme_hero'] ) $classes[] = 'wcas-hide-theme-hero';
+			if ( ! empty( $config['theme_hero_selector'] ) ) $classes[] = 'wcas-theme-hero-has-selector';
 			if ( isset( $_GET['wcas-preview'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['wcas-preview'] ) ) ) $classes[] = 'wcas-preview-frame';
 		}
 		return $classes;
@@ -159,22 +271,40 @@ final class WCAS_Plugin {
 	private function preview_language() {
 		if ( ! isset( $_GET['wcas-preview'], $_GET['wcas-preview-language'] ) || '1' !== sanitize_text_field( wp_unslash( $_GET['wcas-preview'] ) ) || ! current_user_can( 'manage_woocommerce' ) ) return '';
 		$preview_language = sanitize_key( wp_unslash( $_GET['wcas-preview-language'] ) );
-		return in_array( $preview_language, array( 'ar', 'en' ), true ) ? $preview_language : '';
+		return in_array( $preview_language, WCAS_Translation_Packs::supported(), true ) ? $preview_language : '';
 	}
-	public function use_arabic() {
+	/** The chosen language applies consistently to the customer hub and Studio. */
+	public function interface_language() {
 		$preview_language = $this->preview_language();
-		if ( $preview_language ) return 'ar' === $preview_language;
-		$mode = $this->config()['language_mode'];
-		return 'ar' === $mode || ( 'auto' === $mode && 0 === strpos( determine_locale(), 'ar' ) );
+		if ( $preview_language ) return $preview_language;
+		if ( $this->resolving_interface_language ) return 'en';
+		$this->resolving_interface_language = true;
+		$config = $this->config();
+		$this->resolving_interface_language = false;
+		$mode = $config['language_mode'] ?? 'auto';
+		return 'auto' === $mode ? WCAS_Translation_Packs::from_locale( determine_locale() ) : $mode;
+	}
+	public function language_options() { return WCAS_Translation_Packs::labels(); }
+	public function use_arabic() {
+		return 'ar' === $this->interface_language();
 	}
 	public function interface_is_rtl() {
-		$preview_language = $this->preview_language(); $mode = $this->config()['language_mode'];
-		if ( 'en' === $preview_language || 'en' === $mode ) return false;
-		if ( 'ar' === $preview_language || 'ar' === $mode ) return true;
-		return is_rtl();
+		$preview_language = $this->preview_language();
+		if ( $preview_language ) return 'ar' === $preview_language;
+		if ( $this->resolving_interface_language ) return false;
+		$this->resolving_interface_language = true;
+		$mode = $this->config()['language_mode'] ?? 'auto';
+		$this->resolving_interface_language = false;
+		return 'auto' === $mode ? 'ar' === WCAS_Translation_Packs::from_locale( determine_locale() ) : 'ar' === $mode;
 	}
 	public function builtin_arabic( $translation, $text, $domain ) {
-		if ( 'woo-account-studio' !== $domain || ! $this->use_arabic() ) return $translation;
+		if ( 'woo-account-studio' !== $domain ) return $translation;
+		$language = $this->interface_language();
+		if ( 'en' === $language ) return $translation;
+		if ( 'ar' !== $language ) {
+			$translations = WCAS_Translation_Packs::map( $language );
+			return isset( $translations[ $text ] ) ? $translations[ $text ] : $translation;
+		}
 		$arabic = array(
 			'Overview' => 'الرئيسية', 'Orders' => 'الطلبات', 'My library' => 'مكتبتي', 'Addresses' => 'العناوين', 'Profile & security' => 'الملف الشخصي والأمان',
 			'Customer account' => 'حساب العميل', 'Account navigation' => 'تنقّل الحساب', 'Help & support' => 'المساعدة والدعم', 'Sign out' => 'تسجيل الخروج',
@@ -215,8 +345,24 @@ final class WCAS_Plugin {
 			'Your routine, kept beautifully simple.' => 'روتينك، ببساطة وأناقة.', 'A calm personal space for your orders, delivery preferences and support.' => 'مساحة شخصية هادئة لطلباتك وتفضيلات التوصيل والدعم.',
 			'A faster way back to your favourites.' => 'طريق أسرع للعودة إلى مفضلاتك.', 'Review your latest delivery, then return to the store when you are ready.' => 'راجع آخر توصيل لك، ثم عد إلى المتجر عندما تكون مستعدًا.', 'Your latest deliveries and repeat purchases will be easy to reach here.' => 'ستكون آخر عمليات التوصيل والطلبات المتكررة سهلة الوصول هنا.', 'Shop again' => 'تسوّق مجددًا',
 			'A clearer workspace for business orders.' => 'مساحة عمل أوضح لطلبات الأعمال.', 'Keep purchase history, delivery details and your account information together.' => 'احتفظ بسجل المشتريات وتفاصيل التوصيل ومعلومات حسابك في مكان واحد.',
+			'Turkish' => 'التركية', 'French' => 'الفرنسية', 'Spanish' => 'الإسبانية', 'German' => 'الألمانية', 'Italian' => 'الإيطالية', 'Account Studio 4.0' => 'استديو الحساب 4.0',
+			'Liquid glass dock' => 'شريط زجاجي سائل', 'Midnight dock' => 'شريط ليلي داكن', 'Active item treatment' => 'تأثير العنصر النشط', 'Template default' => 'إعداد القالب الافتراضي', 'Halo ring' => 'هالة دائرية', 'Status dot' => 'نقطة حالة', 'Lifted action' => 'إجراء مرتفع',
+			'Hide the theme account hero' => 'إخفاء غلاف حساب القالب', 'Hides recognised page titles and account banners that your theme places above the customer hub.' => 'يخفي عناوين الصفحات وأغلفة الحساب المعروفة التي يضعها القالب فوق مركز العميل.', 'Theme hero selector (optional)' => 'محدد غلاف القالب (اختياري)', 'For a theme-specific banner, enter a safe class or ID selector, for example .page-title-area.' => 'لإخفاء غلاف خاص بقالبك، أدخل محددًا آمنًا لفئة أو معرّف مثل .page-title-area.',
+			'Saved links' => 'روابط محفوظة', 'Arrow' => 'سهم', 'Box' => 'صندوق', 'Built-in icon' => 'أيقونة مدمجة', 'Iconify library' => 'مكتبة Iconify', 'External image URL' => 'رابط صورة خارجي', 'Custom quick links' => 'روابط سريعة مخصصة', 'Add up to six persistent links to the desktop hub and the mobile More panel.' => 'أضف حتى ستة روابط دائمة لمركز سطح المكتب ولوحة «المزيد» في الجوال.', 'Only valid, enabled links appear to customers. Choose a built-in icon, an Iconify name such as mdi:heart, or an external image URL.' => 'لا تظهر للعملاء إلا الروابط الصحيحة والمفعلة. اختر أيقونة مدمجة أو اسم Iconify مثل mdi:heart أو رابط صورة خارجي.',
+			'Link %d' => 'الرابط %d', 'Enable this link' => 'تفعيل هذا الرابط', 'Link label' => 'تسمية الرابط', 'Destination URL' => 'رابط الوجهة', 'Use a full URL or a path such as /contact.' => 'استخدم رابطًا كاملًا أو مسارًا مثل /contact.', 'Icon source' => 'مصدر الأيقونة', 'Iconify icon name' => 'اسم أيقونة Iconify', 'Example: mdi:heart or tabler:calendar.' => 'مثال: mdi:heart أو tabler:calendar.', 'Icon image URL' => 'رابط صورة الأيقونة', 'HTTPS image or SVG URL when using an external icon.' => 'رابط HTTPS لصورة أو SVG عند استخدام أيقونة خارجية.', 'Open in a new tab' => 'فتح في تبويب جديد', 'Select logo' => 'اختر الشعار', 'Use this logo' => 'استخدم هذا الشعار',
+			'%s order' => 'طلب واحد: %s', '%s orders' => '%s طلبات', '%s · %s' => '%s · %s', '0–32 pixels' => '0–32 بكسل', '760–1440 pixels' => '760–1440 بكسل', '85–120 percent' => '85–120 بالمئة', 'A complete customer hub for WooCommerce, developed by Sky Athena.' => 'مركز عميل متكامل لووكومرس، من تطوير سكاي أثينا.', 'Accent color' => 'لون التمييز', 'Account Studio' => 'استديو الحساب', 'Account Studio 3.2' => 'استديو الحساب 3.2', 'Beauty & Wellness' => 'الجمال والعناية', 'Customer Hub' => 'مركز العميل', 'Live customer hub preview' => 'معاينة مباشرة لمركز العميل', 'Order #%s' => 'الطلب #%s', 'Primary color' => 'اللون الأساسي', 'Quick Reorder' => 'إعادة الطلب السريعة', 'Replace the WooCommerce My Account layout' => 'استبدال تخطيط «حسابي» في ووكومرس', 'Show on the overview screen' => 'إظهار في شاشة الرئيسية', 'Support link' => 'رابط الدعم', 'Trade Portal' => 'بوابة التجارة', 'View orders' => 'عرض الطلبات',
 		);
 		return isset( $arabic[ $text ] ) ? $arabic[ $text ] : $translation;
+	}
+	/** Covers labels passed through _n() as well as ordinary gettext strings. */
+	public function builtin_plural_translation( $translation, $single, $plural, $number, $domain ) {
+		if ( 'woo-account-studio' !== $domain ) return $translation;
+		$language = $this->interface_language();
+		if ( 'en' === $language ) return $translation;
+		$source = 1 === absint( $number ) ? $single : $plural;
+		if ( 'ar' === $language ) return $this->builtin_arabic( $translation, $source, $domain );
+		$translations = WCAS_Translation_Packs::map( $language );
+		return isset( $translations[ $source ] ) ? $translations[ $source ] : $translation;
 	}
 	public function brand_mark() {
 		$s = $this->config(); $logo_id = 0;
@@ -252,11 +398,18 @@ final class WCAS_Plugin {
 		echo '</section></div><div class="wcas-more-group"><h2>' . esc_html__( 'Help', 'woo-account-studio' ) . '</h2><section class="wcas-more-list">';
 		$this->more_link( 'bag', __( 'Track an order', 'woo-account-studio' ), $this->account_url( 'orders' ) );
 		$this->more_link( 'help', __( 'Help & support', 'woo-account-studio' ), $s['support_url'] ?: $this->account_url() );
-		echo '</section></div><section class="wcas-more-list wcas-more-session"><a class="wcas-more-signout" href="' . esc_url( wc_logout_url() ) . '">' . esc_html__( 'Sign out', 'woo-account-studio' ) . '</a></section>';
+		echo '</section></div>';
+		$this->render_custom_links( 'more' );
+		echo '<section class="wcas-more-list wcas-more-session"><a class="wcas-more-signout" href="' . esc_url( wc_logout_url() ) . '">' . esc_html__( 'Sign out', 'woo-account-studio' ) . '</a></section>';
 	}
 	public function mobile_more_sheet() {
 		$user = $this->current_user(); $s = $this->config();
-		echo '<dialog class="wcas-mobile-more-sheet" id="wcas-mobile-more-sheet" aria-label="' . esc_attr__( 'More', 'woo-account-studio' ) . '"><div class="wcas-sheet-handle" aria-hidden="true"></div><header class="wcas-sheet-head"><div><span>' . esc_html__( 'Customer account', 'woo-account-studio' ) . '</span><h2>' . esc_html__( 'More', 'woo-account-studio' ) . '</h2></div><button class="wcas-sheet-close" type="button" aria-label="' . esc_attr__( 'Close', 'woo-account-studio' ) . '">×</button></header><section class="wcas-sheet-profile"><span class="wcas-avatar">' . esc_html( $this->initials( $user->display_name ) ) . '</span><div><b>' . esc_html( $user->display_name ) . '</b><small>' . esc_html( $user->user_email ) . '</small></div></section><div class="wcas-sheet-group"><span>' . esc_html__( 'Account', 'woo-account-studio' ) . '</span><a href="' . esc_url( $this->account_url( 'edit-address' ) ) . '">' . $this->icon( 'pin' ) . '<b>' . esc_html__( 'Addresses', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a><a href="' . esc_url( $this->account_url( 'edit-account' ) ) . '">' . $this->icon( 'user' ) . '<b>' . esc_html__( 'Profile & security', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a></div><div class="wcas-sheet-group"><span>' . esc_html__( 'Help', 'woo-account-studio' ) . '</span><a href="' . esc_url( $this->account_url( 'orders' ) ) . '">' . $this->icon( 'bag' ) . '<b>' . esc_html__( 'Track an order', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a><a href="' . esc_url( $s['support_url'] ?: $this->account_url() ) . '">' . $this->icon( 'help' ) . '<b>' . esc_html__( 'Help & support', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a></div><a class="wcas-sheet-signout" href="' . esc_url( wc_logout_url() ) . '">' . esc_html__( 'Sign out', 'woo-account-studio' ) . '</a></dialog>';
+		echo '<dialog class="wcas-mobile-more-sheet" id="wcas-mobile-more-sheet" aria-label="' . esc_attr__( 'More', 'woo-account-studio' ) . '"><div class="wcas-sheet-handle" aria-hidden="true"></div><header class="wcas-sheet-head"><div><span>' . esc_html__( 'Customer account', 'woo-account-studio' ) . '</span><h2>' . esc_html__( 'More', 'woo-account-studio' ) . '</h2></div><button class="wcas-sheet-close" type="button" aria-label="' . esc_attr__( 'Close', 'woo-account-studio' ) . '">×</button></header>';
+		echo '<section class="wcas-sheet-profile"><span class="wcas-avatar">' . esc_html( $this->initials( $user->display_name ) ) . '</span><div><b>' . esc_html( $user->display_name ) . '</b><small>' . esc_html( $user->user_email ) . '</small></div></section>';
+		echo '<div class="wcas-sheet-group"><span>' . esc_html__( 'Account', 'woo-account-studio' ) . '</span><a href="' . esc_url( $this->account_url( 'edit-address' ) ) . '">' . $this->icon( 'pin' ) . '<b>' . esc_html__( 'Addresses', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a><a href="' . esc_url( $this->account_url( 'edit-account' ) ) . '">' . $this->icon( 'user' ) . '<b>' . esc_html__( 'Profile & security', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a></div>';
+		echo '<div class="wcas-sheet-group"><span>' . esc_html__( 'Help', 'woo-account-studio' ) . '</span><a href="' . esc_url( $this->account_url( 'orders' ) ) . '">' . $this->icon( 'bag' ) . '<b>' . esc_html__( 'Track an order', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a><a href="' . esc_url( $s['support_url'] ?: $this->account_url() ) . '">' . $this->icon( 'help' ) . '<b>' . esc_html__( 'Help & support', 'woo-account-studio' ) . '</b>' . $this->icon( 'chevron' ) . '</a></div>';
+		$this->render_custom_links( 'sheet' );
+		echo '<a class="wcas-sheet-signout" href="' . esc_url( wc_logout_url() ) . '">' . esc_html__( 'Sign out', 'woo-account-studio' ) . '</a></dialog>';
 	}
 	private function more_link( $icon, $label, $url ) { echo '<a href="' . esc_url( $url ) . '">' . $this->icon( $icon ) . '<span>' . esc_html( $label ) . '</span>' . $this->icon( 'chevron' ) . '</a>'; }
 	private function title( $eyebrow, $title, $text = '' ) {
@@ -357,7 +510,8 @@ final class WCAS_Plugin {
 		$out = $defaults;
 		$out['enabled'] = isset( $input['enabled'] ) ? 'yes' : 'no';
 		$out['experience'] = in_array( $input['experience'] ?? '', array( 'commerce', 'luxury', 'digital', 'subscription', 'service' ), true ) ? $input['experience'] : $defaults['experience'];
-		$out['language_mode'] = in_array( $input['language_mode'] ?? '', array( 'auto', 'ar', 'en' ), true ) ? $input['language_mode'] : 'auto';
+		$language_modes = array_merge( array( 'auto' ), WCAS_Translation_Packs::supported() );
+		$out['language_mode'] = in_array( $input['language_mode'] ?? '', $language_modes, true ) ? $input['language_mode'] : 'auto';
 		$out['logo_source'] = in_array( $input['logo_source'] ?? '', array( 'site', 'upload', 'none' ), true ) ? $input['logo_source'] : 'site';
 		$out['logo_id'] = absint( $input['logo_id'] ?? 0 );
 		foreach ( array( 'brand_name', 'brand_tagline', 'support_label', 'label_dashboard', 'label_orders', 'label_library', 'label_addresses', 'label_profile', 'label_more' ) as $key ) $out[ $key ] = sanitize_text_field( $input[ $key ] ?? '' );
@@ -393,10 +547,14 @@ final class WCAS_Plugin {
 		$out['experience'] = array_key_exists( $input['experience'] ?? '', $this->presets() ) ? $input['experience'] : 'commerce';
 		$out['appearance'] = in_array( $input['appearance'] ?? '', array( 'light', 'dark' ), true ) ? $input['appearance'] : 'light';
 		$out['mobile_nav'] = in_array( $input['mobile_nav'] ?? '', array( 'dock', 'minimal' ), true ) ? $input['mobile_nav'] : 'dock';
-		$out['mobile_nav_style'] = in_array( $input['mobile_nav_style'] ?? '', array( 'glass', 'pill', 'split', 'solid', 'outline', 'minimal' ), true ) ? $input['mobile_nav_style'] : $defaults['mobile_nav_style'];
+		$out['mobile_nav_style'] = in_array( $input['mobile_nav_style'] ?? '', array( 'glass', 'liquid', 'midnight', 'pill', 'split', 'solid', 'outline', 'minimal' ), true ) ? $input['mobile_nav_style'] : $defaults['mobile_nav_style'];
 		$out['mobile_nav_labels'] = isset( $input['mobile_nav_labels'] ) ? 'yes' : 'no';
 		$out['mobile_icon_style'] = in_array( $input['mobile_icon_style'] ?? '', array( 'line', 'bold', 'orbit', 'soft' ), true ) ? $input['mobile_icon_style'] : $defaults['mobile_icon_style'];
-		$out['hide_page_title'] = isset( $input['hide_page_title'] ) ? 'yes' : 'no';
+		$out['mobile_active_style'] = in_array( $input['mobile_active_style'] ?? '', array( 'none', 'ring', 'dot', 'lift' ), true ) ? $input['mobile_active_style'] : $defaults['mobile_active_style'];
+		$out['hide_theme_hero'] = isset( $input['hide_theme_hero'] ) ? 'yes' : 'no';
+		// Retain the legacy class for stores that carry their own CSS targeting it.
+		$out['hide_page_title'] = $out['hide_theme_hero'];
+		$out['theme_hero_selector'] = $this->sanitize_theme_hero_selector( $input['theme_hero_selector'] ?? '' );
 		$icons = $this->mobile_icon_options();
 		foreach ( array( 'dashboard', 'orders', 'library', 'addresses', 'profile', 'more' ) as $item ) {
 			$key = 'mobile_icon_' . $item;
@@ -405,8 +563,23 @@ final class WCAS_Plugin {
 		$out['hero_title'] = sanitize_text_field( $input['hero_title'] ?? '' );
 		$out['hero_description'] = sanitize_textarea_field( $input['hero_description'] ?? '' );
 		$out['show_template_story'] = isset( $input['show_template_story'] ) ? 'yes' : 'no';
+		$out['custom_links'] = $this->normalise_custom_links( $input['custom_links'] ?? array() );
 		if ( '' === $out['brand_name'] ) $out['brand_name'] = get_bloginfo( 'name' );
 		return wp_parse_args( $out, $defaults );
+	}
+	/**
+	 * A selector is optional and is only used to identify a theme-owned banner.
+	 * It deliberately accepts a small, display-safe selector subset rather than
+	 * arbitrary CSS, so it cannot become a style-injection field.
+	 */
+	private function sanitize_theme_hero_selector( $selector ) {
+		$selector = is_scalar( $selector ) ? trim( wp_strip_all_tags( (string) $selector ) ) : '';
+		$selector = preg_replace( '/\s+/', ' ', $selector );
+		if ( '' === $selector || strlen( $selector ) > 320 ) return '';
+		if ( preg_match( '/[{};<>`"\'\\\\]|\/\*|\*\//', $selector ) ) return '';
+		if ( false !== strpos( $selector, ',' ) ) return '';
+		if ( ! preg_match( '/^[A-Za-z0-9_\-#.\[\]=~|^$*:\(\)\s]+$/', $selector ) || ! preg_match( '/[.#][A-Za-z0-9_-]+/', $selector ) ) return '';
+		return $selector;
 	}
 
 	private function template_cards( $settings ) {
@@ -416,19 +589,57 @@ final class WCAS_Plugin {
 		}
 	}
 
+	/** Administration controls for six durable customer-facing quick links. */
+	private function custom_links_admin( $settings ) {
+		$links = $this->normalise_custom_links( $settings['custom_links'] ?? array() );
+		$icons = $this->custom_link_icon_options();
+		$sources = array(
+			'builtin' => __( 'Built-in icon', 'woo-account-studio' ),
+			'iconify' => __( 'Iconify library', 'woo-account-studio' ),
+			'url' => __( 'External image URL', 'woo-account-studio' ),
+		);
+		echo '<section class="wcas-custom-links-studio" aria-labelledby="wcas-custom-links-title"><div class="wcas-mobile-customizer-heading"><span>' . $this->icon( 'star', 18 ) . '</span><div><h3 id="wcas-custom-links-title">' . esc_html__( 'Custom quick links', 'woo-account-studio' ) . '</h3><p>' . esc_html__( 'Add up to six persistent links to the desktop hub and the mobile More panel.', 'woo-account-studio' ) . '</p></div></div><p class="wcas-custom-links-note">' . esc_html__( 'Only valid, enabled links appear to customers. Choose a built-in icon, an Iconify name such as mdi:heart, or an external image URL.', 'woo-account-studio' ) . '</p><div class="wcas-custom-links-grid">';
+		foreach ( $links as $index => $link ) {
+			$prefix = $this->option_key . '[custom_links][' . absint( $index ) . ']';
+			echo '<article class="wcas-custom-link-card"><h4>' . sprintf( esc_html__( 'Link %d', 'woo-account-studio' ), $index + 1 ) . '</h4><div class="wcas-controls-grid">';
+			echo '<div class="wcas-control"><label class="wcas-switch"><input type="checkbox" name="' . esc_attr( $prefix . '[enabled]' ) . '" ' . checked( 'yes', $link['enabled'], false ) . '><span></span><b>' . esc_html__( 'Enable this link', 'woo-account-studio' ) . '</b></label></div>';
+			$this->custom_link_admin_input( $prefix, 'label', __( 'Link label', 'woo-account-studio' ), $link['label'], 'text' );
+			$this->custom_link_admin_input( $prefix, 'url', __( 'Destination URL', 'woo-account-studio' ), $link['url'], 'text', __( 'Use a full URL or a path such as /contact.', 'woo-account-studio' ) );
+			$this->custom_link_admin_select( $prefix, 'icon_source', __( 'Icon source', 'woo-account-studio' ), $link['icon_source'], $sources );
+			$this->custom_link_admin_select( $prefix, 'icon_name', __( 'Built-in icon', 'woo-account-studio' ), $link['icon_name'], $icons );
+			$this->custom_link_admin_input( $prefix, 'iconify', __( 'Iconify icon name', 'woo-account-studio' ), $link['iconify'], 'text', __( 'Example: mdi:heart or tabler:calendar.', 'woo-account-studio' ) );
+			$this->custom_link_admin_input( $prefix, 'icon_url', __( 'Icon image URL', 'woo-account-studio' ), $link['icon_url'], 'url', __( 'HTTPS image or SVG URL when using an external icon.', 'woo-account-studio' ) );
+			echo '<div class="wcas-control"><label class="wcas-switch"><input type="checkbox" name="' . esc_attr( $prefix . '[new_tab]' ) . '" ' . checked( 'yes', $link['new_tab'], false ) . '><span></span><b>' . esc_html__( 'Open in a new tab', 'woo-account-studio' ) . '</b></label></div>';
+			echo '</div></article>';
+		}
+		echo '</div></section>';
+	}
+	private function custom_link_admin_input( $prefix, $key, $label, $value, $type = 'text', $description = '' ) {
+		$id = 'wcas-custom-link-' . sanitize_key( str_replace( array( '[', ']' ), '-', $prefix ) . '-' . $key );
+		echo '<div class="wcas-control"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label><input id="' . esc_attr( $id ) . '" type="' . esc_attr( $type ) . '" name="' . esc_attr( $prefix . '[' . $key . ']' ) . '" value="' . esc_attr( $value ) . '">';
+		if ( $description ) echo '<p>' . esc_html( $description ) . '</p>';
+		echo '</div>';
+	}
+	private function custom_link_admin_select( $prefix, $key, $label, $value, $choices ) {
+		$id = 'wcas-custom-link-' . sanitize_key( str_replace( array( '[', ']' ), '-', $prefix ) . '-' . $key );
+		echo '<div class="wcas-control"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label><select id="' . esc_attr( $id ) . '" name="' . esc_attr( $prefix . '[' . $key . ']' ) . '">';
+		foreach ( $choices as $choice_key => $choice_label ) echo '<option value="' . esc_attr( $choice_key ) . '" ' . selected( $value, $choice_key, false ) . '>' . esc_html( $choice_label ) . '</option>';
+		echo '</select></div>';
+	}
+
 	public function render_admin_page() {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) return;
 		$s = $this->config(); $preview_url = add_query_arg( 'wcas-preview', '1', $this->account_url() );
 		?>
 		<div class="wrap wcas-studio-admin wcas-studio-v4">
-			<header class="wcas-studio-hero"><div><span><?php esc_html_e( 'Developed by Sky Athena', 'woo-account-studio' ); ?></span><h1><?php esc_html_e( 'Template Studio', 'woo-account-studio' ); ?> <em>3.2</em></h1><p><?php esc_html_e( 'Choose an experience, shape it around your brand, then preview the real customer hub before publishing.', 'woo-account-studio' ); ?></p></div><a class="button button-secondary" href="<?php echo esc_url( $preview_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open live account', 'woo-account-studio' ); ?></a></header>
+			<header class="wcas-studio-hero"><div><a class="wcas-developer-link" href="https://skyathena.com" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Developed by Sky Athena', 'woo-account-studio' ); ?></a><h1><?php esc_html_e( 'Template Studio', 'woo-account-studio' ); ?> <em>4.0</em></h1><p><?php esc_html_e( 'Choose an experience, shape it around your brand, then preview the real customer hub before publishing.', 'woo-account-studio' ); ?></p></div><a class="button button-secondary" href="<?php echo esc_url( $preview_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open live account', 'woo-account-studio' ); ?></a></header>
 			<form method="post" action="options.php" id="wcas-studio-form">
 				<?php settings_fields( 'wcas_settings_group' ); ?>
 				<div class="wcas-studio-layout"><main class="wcas-studio-main">
 					<section class="wcas-portal-section" id="wcas-template-portal"><div class="wcas-portal-heading"><span>01</span><div><h2><?php esc_html_e( 'Template portal', 'woo-account-studio' ); ?></h2><p><?php esc_html_e( 'These are different customer journeys, not colour variations.', 'woo-account-studio' ); ?></p></div></div><div class="wcas-template-grid"><?php $this->template_cards( $s ); ?></div></section>
 					<details class="wcas-portal-section" open><summary><span>02</span><div><h2><?php esc_html_e( 'Brand and visual system', 'woo-account-studio' ); ?></h2><p><?php esc_html_e( 'Use the site identity by default or take full control.', 'woo-account-studio' ); ?></p></div><b>⌄</b></summary><div class="wcas-portal-content"><div class="wcas-controls-grid"><?php
 						$this->admin_input( $s, 'enabled', __( 'Enable Customer Hub', 'woo-account-studio' ), 'checkbox' );
-						$this->admin_input( $s, 'language_mode', __( 'Interface language', 'woo-account-studio' ), 'select', array( 'auto' => __( 'Follow site language', 'woo-account-studio' ), 'ar' => __( 'Arabic', 'woo-account-studio' ), 'en' => __( 'English', 'woo-account-studio' ) ) );
+						$this->admin_input( $s, 'language_mode', __( 'Interface language', 'woo-account-studio' ), 'select', $this->language_options() );
 						$this->admin_input( $s, 'brand_name', __( 'Brand name', 'woo-account-studio' ) );
 						$this->admin_input( $s, 'brand_tagline', __( 'Brand tagline', 'woo-account-studio' ) );
 						$this->admin_input( $s, 'logo_source', __( 'Logo source', 'woo-account-studio' ), 'select', array( 'site' => __( 'Use the site logo', 'woo-account-studio' ), 'upload' => __( 'Use a custom logo', 'woo-account-studio' ), 'none' => __( 'Use initials only', 'woo-account-studio' ) ) );
@@ -459,10 +670,12 @@ final class WCAS_Plugin {
 						$this->admin_input( $s, 'label_more', __( 'More label', 'woo-account-studio' ) );
 					?></div><section class="wcas-mobile-customizer" aria-labelledby="wcas-mobile-customizer-title"><div class="wcas-mobile-customizer-heading"><span><?php echo wp_kses_post( $this->icon( 'sparkles', 18 ) ); ?></span><div><h3 id="wcas-mobile-customizer-title"><?php esc_html_e( 'Mobile bottom bar studio', 'woo-account-studio' ); ?></h3><p><?php esc_html_e( 'Choose a distinct navigation style, decide whether labels appear, and tune every icon customers touch.', 'woo-account-studio' ); ?></p></div></div><div class="wcas-controls-grid wcas-mobile-layout-controls"><?php
 						$this->admin_input( $s, 'mobile_nav', __( 'Mobile bar placement', 'woo-account-studio' ), 'select', array( 'dock' => __( 'Floating above page content', 'woo-account-studio' ), 'minimal' => __( 'Attached to screen edge', 'woo-account-studio' ) ) );
-						$this->admin_input( $s, 'mobile_nav_style', __( 'Bottom bar template', 'woo-account-studio' ), 'select', array( 'glass' => __( 'Glass dock', 'woo-account-studio' ), 'pill' => __( 'Pill navigator', 'woo-account-studio' ), 'split' => __( 'Split action dock', 'woo-account-studio' ), 'solid' => __( 'Solid app bar', 'woo-account-studio' ), 'outline' => __( 'Outline bar', 'woo-account-studio' ), 'minimal' => __( 'Bare essentials', 'woo-account-studio' ) ), __( 'Each template changes the bar shape, active state and visual weight.', 'woo-account-studio' ) );
+						$this->admin_input( $s, 'mobile_nav_style', __( 'Bottom bar template', 'woo-account-studio' ), 'select', array( 'glass' => __( 'Glass dock', 'woo-account-studio' ), 'liquid' => __( 'Liquid glass dock', 'woo-account-studio' ), 'midnight' => __( 'Midnight dock', 'woo-account-studio' ), 'pill' => __( 'Pill navigator', 'woo-account-studio' ), 'split' => __( 'Split action dock', 'woo-account-studio' ), 'solid' => __( 'Solid app bar', 'woo-account-studio' ), 'outline' => __( 'Outline bar', 'woo-account-studio' ), 'minimal' => __( 'Bare essentials', 'woo-account-studio' ) ), __( 'Each template changes the bar shape, active state and visual weight.', 'woo-account-studio' ) );
 						$this->admin_input( $s, 'mobile_nav_labels', __( 'Show labels under mobile icons', 'woo-account-studio' ), 'checkbox' );
 						$this->admin_input( $s, 'mobile_icon_style', __( 'Icon treatment', 'woo-account-studio' ), 'select', array( 'line' => __( 'Fine line', 'woo-account-studio' ), 'bold' => __( 'Bold line', 'woo-account-studio' ), 'orbit' => __( 'Orbit accent', 'woo-account-studio' ), 'soft' => __( 'Soft filled', 'woo-account-studio' ) ) );
-						$this->admin_input( $s, 'hide_page_title', __( 'Hide the theme page title', 'woo-account-studio' ), 'checkbox', array(), __( 'Removes the large My Account title or hero supplied by your theme above the customer hub.', 'woo-account-studio' ) );
+						$this->admin_input( $s, 'mobile_active_style', __( 'Active item treatment', 'woo-account-studio' ), 'select', array( 'none' => __( 'Template default', 'woo-account-studio' ), 'ring' => __( 'Halo ring', 'woo-account-studio' ), 'dot' => __( 'Status dot', 'woo-account-studio' ), 'lift' => __( 'Lifted action', 'woo-account-studio' ) ) );
+						$this->admin_input( $s, 'hide_theme_hero', __( 'Hide the theme account hero', 'woo-account-studio' ), 'checkbox', array(), __( 'Hides recognised page titles and account banners that your theme places above the customer hub.', 'woo-account-studio' ) );
+						$this->admin_input( $s, 'theme_hero_selector', __( 'Theme hero selector (optional)', 'woo-account-studio' ), 'text', array(), __( 'For a theme-specific banner, enter a safe class or ID selector, for example .page-title-area.', 'woo-account-studio' ) );
 					?></div><div class="wcas-mobile-icon-library"><div class="wcas-mobile-icon-library-heading"><div><h3><?php esc_html_e( 'Icon set for the bottom bar', 'woo-account-studio' ); ?></h3><p><?php esc_html_e( 'The three main destinations adapt to the chosen account template. These choices keep their icon language consistent.', 'woo-account-studio' ); ?></p></div><span><?php echo wp_kses_post( $this->icon( 'grid', 20 ) ); ?></span></div><div class="wcas-controls-grid wcas-icon-controls"><?php
 						$mobile_icons = $this->mobile_icon_options();
 						$this->admin_input( $s, 'mobile_icon_dashboard', __( 'Overview icon', 'woo-account-studio' ), 'select', $mobile_icons );
@@ -471,7 +684,7 @@ final class WCAS_Plugin {
 						$this->admin_input( $s, 'mobile_icon_addresses', __( 'Addresses icon', 'woo-account-studio' ), 'select', $mobile_icons );
 						$this->admin_input( $s, 'mobile_icon_profile', __( 'Profile icon', 'woo-account-studio' ), 'select', $mobile_icons );
 						$this->admin_input( $s, 'mobile_icon_more', __( 'More menu icon', 'woo-account-studio' ), 'select', $mobile_icons );
-					?></div></div></section></div></details>
+					?></div></div></section><?php $this->custom_links_admin( $s ); ?></div></details>
 					<details class="wcas-portal-section"><summary><span>05</span><div><h2><?php esc_html_e( 'Advanced styling', 'woo-account-studio' ); ?></h2><p><?php esc_html_e( 'For design refinements after the design system controls.', 'woo-account-studio' ); ?></p></div><b>⌄</b></summary><div class="wcas-portal-content"><?php $this->admin_input( $s, 'custom_css', __( 'Additional CSS', 'woo-account-studio' ), 'textarea', array(), __( 'Use selectors inside .wcas-app only.', 'woo-account-studio' ) ); ?></div></details>
 					<?php submit_button( __( 'Save and publish changes', 'woo-account-studio' ), 'primary large' ); ?>
 				</main>

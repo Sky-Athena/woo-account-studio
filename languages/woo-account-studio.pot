@@ -2,1016 +2,1168 @@
 # This file is distributed under the GPL-2.0-or-later license.
 msgid ""
 msgstr ""
-"Project-Id-Version: Woo Account Studio 3.2.0\n"
+"Project-Id-Version: Woo Account Studio 4.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/Sky-Athena/woo-account-studio/issues\n"
-"POT-Creation-Date: 2026-08-17 21:55+0000\n"
+"POT-Creation-Date: 2026-08-17 22:33+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: Sky Athena Kft. <info@skyathena.com>\n"
 "X-Domain: woo-account-studio\n"
 
-#: includes/class-wcas-plugin.php:341
+#: includes/class-wcas-plugin.php:494
 msgid "%s downloads remaining"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:302
+#: includes/class-wcas-plugin.php:455
 msgid "%s item available to download."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:268
+#: includes/class-wcas-plugin.php:421
 msgid "%s order"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:300
+#: includes/class-wcas-plugin.php:453
 msgid "%s stays close: purchases, delivery details and fast support."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:333
+#: includes/class-wcas-plugin.php:486
 msgid "%s · %s"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:438
+#: includes/class-wcas-plugin.php:649
 msgid "0–32 pixels"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:439
+#: includes/class-wcas-plugin.php:650
 msgid "760–1440 pixels"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:440
+#: includes/class-wcas-plugin.php:651
 msgid "85–120 percent"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:56
+#: includes/class-wcas-plugin.php:160
 msgid "A calm control centre for appointments and service orders."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:305
+#: includes/class-wcas-plugin.php:458
 msgid "A calm personal space for your orders, delivery preferences and support."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:307
+#: includes/class-wcas-plugin.php:460
 msgid "A clearer workspace for business orders."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:306
+#: includes/class-wcas-plugin.php:459
 msgid "A faster way back to your favourites."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:53
+#: includes/class-wcas-plugin.php:157
 msgid "A high-touch account experience with concierge support."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:55
+#: includes/class-wcas-plugin.php:159
 msgid "A member-style home for recurring purchases and benefits."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:301
+#: includes/class-wcas-plugin.php:454
 msgid "A more personal kind of service."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:52
+#: includes/class-wcas-plugin.php:156
 msgid "A post-purchase command centre for everyday stores."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:58
+#: includes/class-wcas-plugin.php:162
 msgid "A practical account optimised for repeat orders and delivery."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:59
+#: includes/class-wcas-plugin.php:163
 msgid "A structured workspace for wholesale and business customers."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:57
+#: includes/class-wcas-plugin.php:161
 msgid "A warm, editorial account for beauty and wellness brands."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:437
+#: includes/class-wcas-plugin.php:648
 msgid "Accent"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:249
-#: includes/class-wcas-plugin.php:259
+#: includes/class-wcas-plugin.php:395
+#: includes/class-wcas-plugin.php:409
 msgid "Account"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:351
-#: includes/class-wcas-plugin.php:351
+#: includes/class-wcas-plugin.php:504
+#: includes/class-wcas-plugin.php:504
 msgid "Account Studio"
 msgstr ""
 
 #: templates/hub/app.php:9
-#: templates/hub/app.php:13
+#: templates/hub/app.php:14
 msgid "Account navigation"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:247
+#: includes/class-wcas-plugin.php:393
 msgid "Account settings and help, all in one place."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:475
+#: includes/class-wcas-plugin.php:676
+msgid "Active item treatment"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:601
+msgid "Add up to six persistent links to the desktop hub and the mobile More panel."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:688
 msgid "Additional CSS"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:99
-#: includes/class-wcas-plugin.php:250
-#: includes/class-wcas-plugin.php:259
-#: includes/class-wcas-plugin.php:283
+#: includes/class-wcas-plugin.php:211
+#: includes/class-wcas-plugin.php:396
+#: includes/class-wcas-plugin.php:409
+#: includes/class-wcas-plugin.php:436
 msgid "Addresses"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:471
+#: includes/class-wcas-plugin.php:684
 msgid "Addresses icon"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:457
+#: includes/class-wcas-plugin.php:668
 msgid "Addresses label"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:475
+#: includes/class-wcas-plugin.php:688
 msgid "Advanced styling"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:117
+#: includes/class-wcas-plugin.php:229
 msgid "App grid"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:435
+#: includes/class-wcas-plugin.php:646
 msgid "Appearance"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:431
+#: includes/class-wcas-translation-packs.php:21
 msgid "Arabic"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:461
+#: includes/class-wcas-plugin.php:113
+msgid "Arrow"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:672
 msgid "Attached to screen edge"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:437
+#: includes/class-wcas-plugin.php:648
 msgid "Background"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:462
+#: includes/class-wcas-plugin.php:673
 msgid "Bare essentials"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:57
+#: includes/class-wcas-plugin.php:161
 msgid "Beauty & Wellness"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:347
+#: includes/class-wcas-plugin.php:500
 msgid "Billing address"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:464
+#: includes/class-wcas-plugin.php:675
 msgid "Bold line"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:119
+#: includes/class-wcas-plugin.php:231
 msgid "Book"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:462
+#: includes/class-wcas-plugin.php:673
 msgid "Bottom bar template"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:429
+#: includes/class-wcas-plugin.php:114
+msgid "Box"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:640
 msgid "Brand and visual system"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:432
+#: includes/class-wcas-plugin.php:643
 msgid "Brand name"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:433
+#: includes/class-wcas-plugin.php:644
 msgid "Brand tagline"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:54
+#: includes/class-wcas-plugin.php:158
 msgid "Bring downloads, courses and licences to the foreground."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:327
+#: includes/class-wcas-plugin.php:480
 msgid "Browse products"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:59
+#: includes/class-wcas-plugin.php:597
+#: includes/class-wcas-plugin.php:609
+msgid "Built-in icon"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:163
 msgid "Business led"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:437
+#: includes/class-wcas-plugin.php:648
 msgid "Card surface"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:691
 msgid "Changes are reflected here before you save. The preview uses your current administrator account and does not publish anything."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:460
+#: includes/class-wcas-plugin.php:671
 msgid "Choose a distinct navigation style, decide whether labels appear, and tune every icon customers touch."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:424
+#: includes/class-wcas-plugin.php:635
 msgid "Choose an experience, shape it around your brand, then preview the real customer hub before publishing."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:259
+#: includes/class-wcas-plugin.php:407
 msgid "Close"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:52
+#: includes/class-wcas-plugin.php:156
 msgid "Commerce Hub"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:451
+#: includes/class-wcas-plugin.php:662
 msgid "Compact sidebar"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:117
+#: includes/class-wcas-plugin.php:229
 msgid "Compass"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:293
-#: includes/class-wcas-plugin.php:334
+#: includes/class-wcas-plugin.php:446
+#: includes/class-wcas-plugin.php:487
 msgid "Confirmed"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:336
+#: includes/class-wcas-plugin.php:489
 msgid "Contact support"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:54
+#: includes/class-wcas-plugin.php:158
 msgid "Content led"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:439
+#: includes/class-wcas-plugin.php:650
 msgid "Content width"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:456
+#: includes/class-wcas-plugin.php:667
 msgid "Context hub label"
 msgstr ""
 
-#: templates/hub/app.php:13
+#: templates/hub/app.php:14
 msgid "Continue shopping"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:442
+#: includes/class-wcas-plugin.php:653
 msgid "Control the priority and presence of each home-screen module."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:58
+#: includes/class-wcas-plugin.php:162
 msgid "Convenience led"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:438
+#: includes/class-wcas-plugin.php:649
 msgid "Corner radius"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:444
+#: includes/class-wcas-plugin.php:601
+msgid "Custom quick links"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:655
 msgid "Custom welcome description"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:443
+#: includes/class-wcas-plugin.php:654
 msgid "Custom welcome title"
 msgstr ""
 
 #: templates/hub/app.php:8
-#: includes/class-wcas-plugin.php:259
+#: includes/class-wcas-plugin.php:407
 msgid "Customer account"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:242
-#: includes/class-wcas-plugin.php:277
+#: includes/class-wcas-plugin.php:388
+#: includes/class-wcas-plugin.php:430
 msgid "Customer hub"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:442
+#: includes/class-wcas-plugin.php:653
 msgid "Customer journey"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:435
+#: includes/class-wcas-plugin.php:646
 msgid "Dark"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:293
+#: includes/class-wcas-plugin.php:446
 msgid "Delivered"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:336
+#: includes/class-wcas-plugin.php:489
 msgid "Delivery address"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:283
-#: includes/class-wcas-plugin.php:344
+#: includes/class-wcas-plugin.php:436
+#: includes/class-wcas-plugin.php:497
 msgid "Delivery details"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:118
+#: includes/class-wcas-plugin.php:230
 msgid "Delivery truck"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:451
+#: includes/class-wcas-plugin.php:662
 msgid "Desktop navigation"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:691
 msgid "Desktop preview"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:424
+#: includes/class-wcas-plugin.php:607
+msgid "Destination URL"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:635
 msgid "Developed by Sky Athena"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:54
+#: includes/class-wcas-plugin.php:158
 msgid "Digital Library"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:339
+#: includes/class-wcas-plugin.php:492
 msgid "Digital library"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:295
+#: includes/class-wcas-plugin.php:448
 msgid "Discover products selected for you and return anytime to manage your account."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:119
-#: includes/class-wcas-plugin.php:341
+#: includes/class-wcas-plugin.php:231
+#: includes/class-wcas-plugin.php:494
 msgid "Download"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:462
+#: includes/class-wcas-plugin.php:673
 msgid "Each template changes the bar shape, active state and visual weight."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:347
+#: includes/class-wcas-plugin.php:500
 msgid "Edit address"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:430
+#: includes/class-wcas-plugin.php:641
 msgid "Enable Customer Hub"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:431
+#: includes/class-wcas-plugin.php:605
+msgid "Enable this link"
+msgstr ""
+
+#: includes/class-wcas-translation-packs.php:22
 msgid "English"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:277
+#: includes/class-wcas-plugin.php:430
 msgid "Everything about your orders and account, in one place."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:300
+#: includes/class-wcas-plugin.php:453
 msgid "Everything after checkout, in one view."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:288
+#: includes/class-wcas-plugin.php:610
+msgid "Example: mdi:heart or tabler:calendar."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:441
 msgid "Explore the store"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:284
+#: includes/class-wcas-plugin.php:599
+msgid "External image URL"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:437
 msgid "Files & purchases"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:464
+#: includes/class-wcas-plugin.php:675
 msgid "Fine line"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:461
+#: includes/class-wcas-plugin.php:672
 msgid "Floating above page content"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:119
+#: includes/class-wcas-plugin.php:231
 msgid "Folder"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:431
+#: includes/class-wcas-translation-packs.php:20
 msgid "Follow site language"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:475
+#: includes/class-wcas-plugin.php:678
+msgid "For a theme-specific banner, enter a safe class or ID selector, for example .page-title-area."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:688
 msgid "For design refinements after the design system controls."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:451
+#: includes/class-wcas-translation-packs.php:24
+msgid "French"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:662
 msgid "Full sidebar"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:304
+#: includes/class-wcas-translation-packs.php:26
+msgid "German"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:457
 msgid "Get support"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:462
+#: includes/class-wcas-plugin.php:673
 msgid "Glass dock"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:277
+#: includes/class-wcas-plugin.php:430
 msgid "Good to see you, %s"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:121
+#: includes/class-wcas-plugin.php:611
+msgid "HTTPS image or SVG URL when using an external icon."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:676
+msgid "Halo ring"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:233
 msgid "Heart"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:252
-#: includes/class-wcas-plugin.php:259
+#: includes/class-wcas-plugin.php:112
+#: includes/class-wcas-plugin.php:398
+#: includes/class-wcas-plugin.php:410
 msgid "Help"
 msgstr ""
 
-#: templates/hub/app.php:10
-#: includes/class-wcas-plugin.php:254
-#: includes/class-wcas-plugin.php:259
+#: templates/hub/app.php:11
+#: includes/class-wcas-plugin.php:400
+#: includes/class-wcas-plugin.php:410
 msgid "Help & support"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:465
-msgid "Hide the theme page title"
+#: includes/class-wcas-plugin.php:677
+msgid "Hide the theme account hero"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:117
+#: includes/class-wcas-plugin.php:677
+msgid "Hides recognised page titles and account banners that your theme places above the customer hub."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:229
 msgid "Home"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:120
+#: includes/class-wcas-plugin.php:232
 msgid "Home address"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:466
+#: includes/class-wcas-plugin.php:611
+msgid "Icon image URL"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:679
 msgid "Icon set for the bottom bar"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:464
+#: includes/class-wcas-plugin.php:608
+msgid "Icon source"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:675
 msgid "Icon treatment"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:431
+#: includes/class-wcas-plugin.php:610
+msgid "Iconify icon name"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:598
+msgid "Iconify library"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:642
 msgid "Interface language"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:334
+#: includes/class-wcas-translation-packs.php:27
+msgid "Italian"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:487
 msgid "Items in this order"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:344
+#: includes/class-wcas-plugin.php:497
 msgid "Keep delivery and billing details up to date."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:307
+#: includes/class-wcas-plugin.php:460
 msgid "Keep purchase history, delivery details and your account information together."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:288
+#: includes/class-wcas-plugin.php:441
 msgid "Keep shopping to unlock personalised benefits and offers."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:303
+#: includes/class-wcas-plugin.php:456
 msgid "Keep your favourites coming."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:293
+#: includes/class-wcas-plugin.php:446
 msgid "Latest order"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:470
+#: includes/class-wcas-plugin.php:683
 msgid "Library icon"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:435
+#: includes/class-wcas-plugin.php:676
+msgid "Lifted action"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:646
 msgid "Light"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:604
+msgid "Link %d"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:606
+msgid "Link label"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:673
+msgid "Liquid glass dock"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:691
 msgid "Live customer hub preview"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:691
 msgid "Live preview"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:691
 msgid "Loading your account preview…"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:120
+#: includes/class-wcas-plugin.php:232
 msgid "Location pin"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:434
+#: includes/class-wcas-plugin.php:645
 msgid "Logo source"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:53
+#: includes/class-wcas-plugin.php:157
 msgid "Luxury Concierge"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:303
+#: includes/class-wcas-plugin.php:456
 msgid "Manage purchases"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:242
+#: includes/class-wcas-plugin.php:388
 msgid "Manage this part of your account in a focused space."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:349
+#: includes/class-wcas-plugin.php:502
 msgid "Manage your personal details and password."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:120
+#: includes/class-wcas-plugin.php:232
 msgid "Map"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:288
+#: includes/class-wcas-plugin.php:441
 msgid "Member benefits"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:122
+#: includes/class-wcas-plugin.php:234
 msgid "Menu"
 msgstr ""
 
-#: templates/hub/app.php:14
+#: includes/class-wcas-plugin.php:673
+msgid "Midnight dock"
+msgstr ""
+
+#: templates/hub/app.php:15
 msgid "Mobile account navigation"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:461
+#: includes/class-wcas-plugin.php:672
 msgid "Mobile bar placement"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:460
+#: includes/class-wcas-plugin.php:671
 msgid "Mobile bottom bar studio"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:691
 msgid "Mobile preview"
 msgstr ""
 
 #: templates/hub/app.php:3
-#: includes/class-wcas-plugin.php:247
-#: includes/class-wcas-plugin.php:259
-#: includes/class-wcas-plugin.php:259
+#: includes/class-wcas-plugin.php:393
+#: includes/class-wcas-plugin.php:407
+#: includes/class-wcas-plugin.php:407
 msgid "More"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:122
+#: includes/class-wcas-plugin.php:234
 msgid "More dots"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:459
+#: includes/class-wcas-plugin.php:670
 msgid "More label"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:473
+#: includes/class-wcas-plugin.php:686
 msgid "More menu icon"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:98
-#: includes/class-wcas-plugin.php:284
-#: includes/class-wcas-plugin.php:339
+#: includes/class-wcas-plugin.php:210
+#: includes/class-wcas-plugin.php:437
+#: includes/class-wcas-plugin.php:492
 msgid "My library"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:450
+#: includes/class-wcas-plugin.php:661
 msgid "Navigation, content and motion"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:336
+#: includes/class-wcas-plugin.php:489
 msgid "Need help with this order?"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:347
+#: includes/class-wcas-plugin.php:500
 msgid "No address saved yet."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:327
+#: includes/class-wcas-plugin.php:480
 msgid "No orders yet"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:302
-msgid "Open library"
+#: includes/class-wcas-plugin.php:601
+msgid "Only valid, enabled links appear to customers. Choose a built-in icon, an Iconify name such as mdi:heart, or an external image URL."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:424
-msgid "Open live account"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:464
-msgid "Orbit accent"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:333
-msgid "Order #%s"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:293
-msgid "Order #%s is %s"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:326
-msgid "Order centre"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:333
-msgid "Order details"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:328
-msgid "Order items"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:332
-msgid "Order not found."
-msgstr ""
-
-#: includes/class-wcas-plugin.php:334
-msgid "Order placed"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:97
-#: includes/class-wcas-plugin.php:282
-msgid "Orders"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:52
-msgid "Orders first"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:469
-msgid "Orders icon"
+#: includes/class-wcas-plugin.php:612
+msgid "Open in a new tab"
 msgstr ""
 
 #: includes/class-wcas-plugin.php:455
-msgid "Orders label"
+msgid "Open library"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:336
-msgid "Our support team can help with delivery, returns or payments."
+#: includes/class-wcas-plugin.php:635
+msgid "Open live account"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:462
-msgid "Outline bar"
+#: includes/class-wcas-plugin.php:675
+msgid "Orbit accent"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:96
-msgid "Overview"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:468
-msgid "Overview icon"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:454
-msgid "Overview label"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:118
-msgid "Package"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:247
-#: includes/class-wcas-plugin.php:349
-msgid "Personal area"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:57
-msgid "Personal led"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:462
-msgid "Pill navigator"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:293
-msgid "Placed on %s · %s"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:119
-msgid "Play"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:437
-msgid "Primary"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:121
-msgid "Profile"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:100
-#: includes/class-wcas-plugin.php:251
-#: includes/class-wcas-plugin.php:259
-#: includes/class-wcas-plugin.php:349
-msgid "Profile & security"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:472
-msgid "Profile icon"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:458
-msgid "Profile label"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:335
-msgid "Quantity: %s"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:58
-msgid "Quick Reorder"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:295
-msgid "Ready when you are"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:118
-msgid "Receipt"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:53
-msgid "Relationship led"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:436
-msgid "Remove"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:465
-msgid "Removes the large My Account title or hero supplied by your theme above the customer hub."
-msgstr ""
-
-#: includes/class-wcas-plugin.php:55
-msgid "Retention led"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:303
-msgid "Review recurring purchases, delivery details and member benefits from one home."
-msgstr ""
-
-#: includes/class-wcas-plugin.php:306
-msgid "Review your latest delivery, then return to the store when you are ready."
-msgstr ""
-
-#: includes/class-wcas-plugin.php:476
-msgid "Save and publish changes"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:436
-msgid "Select custom logo"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:56
-msgid "Service & Booking"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:56
-msgid "Service led"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:121
-msgid "Shield"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:347
-msgid "Shipping address"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:306
-msgid "Shop again"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:118
-msgid "Shopping bag"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:448
-msgid "Show benefits module"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:463
-msgid "Show labels under mobile icons"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:445
-msgid "Show priority order card"
-msgstr ""
-
-#: includes/class-wcas-plugin.php:447
-msgid "Show quick actions"
+#: includes/class-wcas-plugin.php:486
+msgid "Order #%s"
 msgstr ""
 
 #: includes/class-wcas-plugin.php:446
+msgid "Order #%s is %s"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:479
+msgid "Order centre"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:486
+msgid "Order details"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:481
+msgid "Order items"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:485
+msgid "Order not found."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:487
+msgid "Order placed"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:209
+#: includes/class-wcas-plugin.php:435
+msgid "Orders"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:156
+msgid "Orders first"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:682
+msgid "Orders icon"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:666
+msgid "Orders label"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:489
+msgid "Our support team can help with delivery, returns or payments."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:673
+msgid "Outline bar"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:208
+msgid "Overview"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:681
+msgid "Overview icon"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:665
+msgid "Overview label"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:230
+msgid "Package"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:393
+#: includes/class-wcas-plugin.php:502
+msgid "Personal area"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:161
+msgid "Personal led"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:673
+msgid "Pill navigator"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:446
+msgid "Placed on %s · %s"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:231
+msgid "Play"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:648
+msgid "Primary"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:233
+msgid "Profile"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:212
+#: includes/class-wcas-plugin.php:397
+#: includes/class-wcas-plugin.php:409
+#: includes/class-wcas-plugin.php:502
+msgid "Profile & security"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:685
+msgid "Profile icon"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:669
+msgid "Profile label"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:488
+msgid "Quantity: %s"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:162
+msgid "Quick Reorder"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:448
+msgid "Ready when you are"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:230
+msgid "Receipt"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:157
+msgid "Relationship led"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:647
+msgid "Remove"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:159
+msgid "Retention led"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:456
+msgid "Review recurring purchases, delivery details and member benefits from one home."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:459
+msgid "Review your latest delivery, then return to the store when you are ready."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:689
+msgid "Save and publish changes"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:138
+#: includes/class-wcas-plugin.php:139
+#: includes/class-wcas-plugin.php:140
+msgid "Saved links"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:647
+msgid "Select custom logo"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:184
+msgid "Select logo"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:160
+msgid "Service & Booking"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:160
+msgid "Service led"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:233
+msgid "Shield"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:500
+msgid "Shipping address"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:459
+msgid "Shop again"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:230
+msgid "Shopping bag"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:659
+msgid "Show benefits module"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:674
+msgid "Show labels under mobile icons"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:656
+msgid "Show priority order card"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:658
+msgid "Show quick actions"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:657
 msgid "Show template-specific module"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:437
+#: includes/class-wcas-plugin.php:648
 msgid "Sidebar"
 msgstr ""
 
-#: templates/hub/app.php:11
-#: includes/class-wcas-plugin.php:255
-#: includes/class-wcas-plugin.php:259
+#: templates/hub/app.php:12
+#: includes/class-wcas-plugin.php:403
+#: includes/class-wcas-plugin.php:412
 msgid "Sign out"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:691
 msgid "Small mobile preview"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:464
+#: includes/class-wcas-plugin.php:675
 msgid "Soft filled"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:462
+#: includes/class-wcas-plugin.php:673
 msgid "Solid app bar"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:117
+#: includes/class-wcas-translation-packs.php:25
+msgid "Spanish"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:229
 msgid "Sparkles"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:462
+#: includes/class-wcas-plugin.php:673
 msgid "Split action dock"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:122
+#: includes/class-wcas-plugin.php:234
 msgid "Star"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:295
+#: includes/class-wcas-plugin.php:448
 msgid "Start shopping"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:55
+#: includes/class-wcas-plugin.php:676
+msgid "Status dot"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:159
 msgid "Subscription Club"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:453
+#: includes/class-wcas-plugin.php:664
 msgid "Subtle interface motion"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:285
+#: includes/class-wcas-plugin.php:438
 msgid "Support"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:452
+#: includes/class-wcas-plugin.php:663
 msgid "Support or WhatsApp URL"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:301
-#: includes/class-wcas-plugin.php:305
+#: includes/class-wcas-plugin.php:454
+#: includes/class-wcas-plugin.php:458
 msgid "Talk to us"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:424
+#: includes/class-wcas-plugin.php:635
 msgid "Template Studio"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:428
+#: includes/class-wcas-plugin.php:676
+msgid "Template default"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:639
 msgid "Template portal"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:437
+#: includes/class-wcas-plugin.php:648
 msgid "Text"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:440
+#: includes/class-wcas-plugin.php:651
 msgid "Text scale"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:466
+#: includes/class-wcas-plugin.php:679
 msgid "The three main destinations adapt to the chosen account template. These choices keep their icon language consistent."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:428
+#: includes/class-wcas-plugin.php:678
+msgid "Theme hero selector (optional)"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:639
 msgid "These are different customer journeys, not colour variations."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:336
+#: includes/class-wcas-plugin.php:489
 msgid "Total paid"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:253
-#: includes/class-wcas-plugin.php:259
+#: includes/class-wcas-plugin.php:399
+#: includes/class-wcas-plugin.php:410
 msgid "Track an order"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:293
+#: includes/class-wcas-plugin.php:446
 msgid "Track order"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:59
+#: includes/class-wcas-plugin.php:163
 msgid "Trade Portal"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:450
+#: includes/class-wcas-plugin.php:661
 msgid "Tune the desktop shell and the mobile app dock independently."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:341
+#: includes/class-wcas-translation-packs.php:23
+msgid "Turkish"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:494
 msgid "Unlimited downloads"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:434
+#: includes/class-wcas-plugin.php:645
 msgid "Use a custom logo"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:434
+#: includes/class-wcas-plugin.php:607
+msgid "Use a full URL or a path such as /contact."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:645
 msgid "Use initials only"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:475
+#: includes/class-wcas-plugin.php:688
 msgid "Use selectors inside .wcas-app only."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:429
+#: includes/class-wcas-plugin.php:640
 msgid "Use the site identity by default or take full control."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:434
+#: includes/class-wcas-plugin.php:645
 msgid "Use the site logo"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:304
+#: includes/class-wcas-plugin.php:185
+msgid "Use this logo"
+msgstr ""
+
+#: includes/class-wcas-plugin.php:457
 msgid "Use this space to find service orders, delivery details and quick help."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:328
+#: includes/class-wcas-plugin.php:481
 msgid "View order"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:300
-#: includes/class-wcas-plugin.php:307
+#: includes/class-wcas-plugin.php:453
+#: includes/class-wcas-plugin.php:460
 msgid "View orders"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:326
+#: includes/class-wcas-plugin.php:479
 msgid "View your purchases, follow delivery and order again."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:285
+#: includes/class-wcas-plugin.php:438
 msgid "We are here to help"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:327
+#: includes/class-wcas-plugin.php:480
 msgid "When you place an order, its progress will appear here."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:301
+#: woo-account-studio.php:86
+msgid "Woo Account Studio needs WooCommerce to be installed and active. The customer hub stays disabled until then."
+msgstr ""
+
+#: includes/class-wcas-plugin.php:454
 msgid "Your account keeps orders, delivery and direct support beautifully organised."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:344
+#: includes/class-wcas-plugin.php:497
 msgid "Your addresses"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:302
+#: includes/class-wcas-plugin.php:455
 msgid "Your digital library, ready whenever you are."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:340
+#: includes/class-wcas-plugin.php:493
 msgid "Your downloadable purchases will be kept safely here."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:302
+#: includes/class-wcas-plugin.php:455
 msgid "Your files and learning products will live here after purchase."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:306
+#: includes/class-wcas-plugin.php:459
 msgid "Your latest deliveries and repeat purchases will be easy to reach here."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:340
+#: includes/class-wcas-plugin.php:493
 msgid "Your library is empty"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:295
+#: includes/class-wcas-plugin.php:448
 msgid "Your next favourite is waiting."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:288
+#: includes/class-wcas-plugin.php:441
 msgid "Your next order deserves something extra."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:326
+#: includes/class-wcas-plugin.php:479
 msgid "Your orders"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:339
+#: includes/class-wcas-plugin.php:492
 msgid "Your purchased files, courses and digital products."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:478
+#: includes/class-wcas-plugin.php:691
 msgid "Your real account"
 msgstr ""
 
-#: includes/class-wcas-plugin.php:305
+#: includes/class-wcas-plugin.php:458
 msgid "Your routine, kept beautifully simple."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:304
+#: includes/class-wcas-plugin.php:457
 msgid "Your service details stay close."
 msgstr ""
 
-#: includes/class-wcas-plugin.php:281
+#: includes/class-wcas-plugin.php:434
 msgid "Your space"
 msgstr ""

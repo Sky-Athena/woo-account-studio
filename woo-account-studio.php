@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Woo Account Studio
  * Plugin URI:        https://github.com/Sky-Athena/woo-account-studio
- * Description:       Replaces the default WooCommerce My Account page with a modern, mobile-first customer hub — eight ready-made journeys, a live template studio and a configurable mobile navigation bar.
- * Version:           3.2.0
+ * Description:       Replaces the default WooCommerce My Account page with a modern, mobile-first customer hub — eight ready-made journeys, a live template studio, seven interface languages and a configurable mobile navigation bar.
+ * Version:           4.0.0
  * Requires at least: 6.5
  * Tested up to:      7.0
  * Requires PHP:      7.4
@@ -35,11 +35,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WCAS_VERSION', '3.2.0' );
+define( 'WCAS_VERSION', '4.0.0' );
 define( 'WCAS_FILE', __FILE__ );
 define( 'WCAS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCAS_URL', plugin_dir_url( __FILE__ ) );
 
+require_once WCAS_PATH . 'includes/class-wcas-translation-packs.php';
 require_once WCAS_PATH . 'includes/class-wcas-plugin.php';
 
 register_activation_hook( WCAS_FILE, array( 'WCAS_Plugin', 'activate' ) );
@@ -87,4 +88,22 @@ add_action(
 			}
 		);
 	}
+);
+
+/**
+ * Add a link to the developer's site on the Plugins screen.
+ */
+add_filter(
+	'plugin_row_meta',
+	static function ( $links, $file ) {
+		if ( plugin_basename( WCAS_FILE ) !== $file ) {
+			return $links;
+		}
+
+		$links[] = '<a href="https://skyathena.com" target="_blank" rel="noopener noreferrer">SkyAthena.com</a>';
+
+		return $links;
+	},
+	10,
+	2
 );

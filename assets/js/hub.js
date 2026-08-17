@@ -84,7 +84,9 @@
     heart: '<path d="M20.8 8.7c0 5.2-8.8 10.3-8.8 10.3S3.2 13.9 3.2 8.7A4.7 4.7 0 0 1 12 6.4a4.7 4.7 0 0 1 8.8 2.3Z"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     dots: '<circle cx="5" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/>',
-    star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/>'
+    star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.7 2.7 0 1 1 4.3 2.2c-1.5 1.1-1.8 1.5-1.8 3"/><path d="M12 17h.01"/>',
+    chevron: '<path d="m9 18 6-6-6-6"/>'
   };
 
   function previewMobileIcon(element, iconName) {
@@ -114,6 +116,87 @@
     previewMobileIcon(dock.querySelector('[data-wcas-mobile-item="more"]') || dock.querySelector('.wcas-mobile-more-trigger'), icons.more);
   }
 
+  /* Persistent links are rendered directly in the preview so a merchant can
+     assess their copy, icon and placement before publishing anything. */
+  function previewLinkUrl(value) {
+    if (typeof value !== 'string') return '';
+    value = value.trim();
+    if (/^https?:\/\//i.test(value)) return value;
+    return /^\/(?!\/)/.test(value) ? value : '';
+  }
+
+  function previewIconUrl(value) {
+    if (typeof value !== 'string') return '';
+    value = value.trim();
+    return /^https:\/\//i.test(value) ? value : '';
+  }
+
+  function previewSvgIcon(name, className) {
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('width', '20');
+    svg.setAttribute('height', '20');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '1.8');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    if (className) svg.setAttribute('class', className);
+    svg.innerHTML = mobileIconPaths[name] || mobileIconPaths.star;
+    return svg;
+  }
+
+  function previewLinkIcon(link) {
+    var source = link.iconSource || link.icon_source || 'builtin';
+    var imageUrl = '';
+    if (source === 'iconify' && typeof link.iconify === 'string' && /^[a-z0-9][a-z0-9-]{0,63}:[a-z0-9][a-z0-9-]{0,127}$/i.test(link.iconify.trim())) {
+      imageUrl = 'https://api.iconify.design/' + link.iconify.trim().toLowerCase() + '.svg';
+    } else if (source === 'url') {
+      imageUrl = previewIconUrl(link.iconUrl || link.icon_url || '');
+    }
+    if (!imageUrl) return previewSvgIcon(link.iconName || link.icon_name || 'star');
+    var image = document.createElement('img');
+    image.className = 'wcas-external-icon wcas-custom-link-image';
+    image.src = imageUrl; image.alt = ''; image.width = 20; image.height = 20;
+    image.setAttribute('aria-hidden', 'true');
+    return image;
+  }
+
+  function previewCustomLink(link, context) {
+    var href = previewLinkUrl(link.url || '');
+    var anchor = document.createElement('a');
+    anchor.className = 'wcas-custom-link';
+    anchor.href = href || '#';
+    if (link.newTab || link.new_tab) { anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; }
+    /* The iframe is a visual preview, not a way to navigate to an unsaved URL. */
+    anchor.addEventListener('click', function (event) { event.preventDefault(); });
+    anchor.appendChild(previewLinkIcon(link));
+    if (context === 'sheet') {
+      var labelStrong = document.createElement('b'); labelStrong.textContent = String(link.label || '').trim(); anchor.appendChild(labelStrong);
+      anchor.appendChild(previewSvgIcon('chevron'));
+    } else {
+      var label = document.createElement('span'); label.textContent = String(link.label || '').trim(); anchor.appendChild(label);
+      if (context === 'more') anchor.appendChild(previewSvgIcon('chevron'));
+    }
+    return anchor;
+  }
+
+  function previewCustomLinks(links) {
+    if (!Array.isArray(links)) return;
+    var valid = links.filter(function (link) {
+      return link && truthySetting(link.enabled) && String(link.label || '').trim() && previewLinkUrl(link.url || '');
+    });
+    document.querySelectorAll('[data-wcas-custom-links]').forEach(function (slot) {
+      var context = slot.getAttribute('data-wcas-custom-links');
+      var list = context === 'sidebar' ? slot : slot.querySelector('.wcas-custom-links');
+      if (!list) return;
+      slot.hidden = valid.length === 0;
+      list.replaceChildren();
+      valid.forEach(function (link) { list.appendChild(previewCustomLink(link, context)); });
+    });
+  }
+
   function previewNavigationLabels(labels) {
     if (!labels || typeof labels !== 'object') return;
     var destinations = { dashboard: 'dashboard', orders: 'orders', library: 'downloads', addresses: 'edit-address', profile: 'edit-account', more: 'more' };
@@ -137,6 +220,139 @@
       if ((app && app.contains(element)) || element.closest('#wpadminbar')) return;
       element.classList.toggle('wcas-preview-hidden-title', hidden);
     });
+  }
+
+  function truthySetting(value) {
+    return value === true || value === 1 || value === '1' || value === 'yes' || value === 'on' || value === 'true';
+  }
+
+  function hubConfig() {
+    return window.wcasHub && typeof window.wcasHub === 'object' ? window.wcasHub : {};
+  }
+
+  function firstSetting(payload, names) {
+    var config = hubConfig();
+    var i;
+    for (i = 0; i < names.length; i += 1) {
+      if (payload && Object.prototype.hasOwnProperty.call(payload, names[i])) return payload[names[i]];
+      if (Object.prototype.hasOwnProperty.call(config, names[i])) return config[names[i]];
+    }
+    return undefined;
+  }
+
+  function closestElement(element, selector) {
+    if (!element) return null;
+    if (element.closest) return element.closest(selector);
+    var current = element;
+    while (current && current.nodeType === 1) {
+      if (current.matches && current.matches(selector)) return current;
+      current = current.parentElement;
+    }
+    return null;
+  }
+
+  function elementMatches(element, selector) {
+    if (!element || element.nodeType !== 1) return false;
+    var matcher = element.matches || element.msMatchesSelector || element.webkitMatchesSelector;
+    return matcher ? matcher.call(element, selector) : false;
+  }
+
+  function isProtectedThemeChrome(element) {
+    if (!element || (app && (element === app || app.contains(element)))) return true;
+    return !!closestElement(element, 'header, footer, #wpadminbar, .site-header, .site-footer, .elementor-location-header, .elementor-location-footer, .wcas-app');
+  }
+
+  function safeThemeHeroSelector(payload) {
+    var selector = firstSetting(payload, ['themeHeroSelector', 'theme_hero_selector']);
+    if (!selector && app) selector = app.getAttribute('data-wcas-theme-hero-selector');
+    if (!selector || typeof selector !== 'string') return '';
+    selector = selector.trim();
+    /* This is a merchant-controlled selector. Keep it short and single-target,
+       then validate it with the browser before it is ever used. */
+    if (selector.length > 240 || /[\u0000{};,]/.test(selector) || !/[.#\[]/.test(selector)) return '';
+    try {
+      document.querySelector(selector);
+    } catch (error) {
+      return '';
+    }
+    return selector;
+  }
+
+  function likelyHeroContainer(element) {
+    return elementMatches(element, '[data-wcas-theme-hero], .elementor-top-section, .elementor-section, .page-header, .entry-header, .page-title-wrap, .titlebar, .hero, .banner, .page-hero, .page-banner');
+  }
+
+  function heroContainerFor(element) {
+    if (!element || isProtectedThemeChrome(element)) return null;
+    if (likelyHeroContainer(element)) return element;
+    var structural = closestElement(element, '[data-wcas-theme-hero], .elementor-top-section, .elementor-section, .page-header, .entry-header, .page-title-wrap, .titlebar, .hero, .banner, .page-hero, .page-banner');
+    if (structural && !isProtectedThemeChrome(structural)) return structural;
+    /* A custom selector may point directly at a title widget rather than its
+       containing section. Hiding that widget is safer than hiding all <main>. */
+    if (elementMatches(element, 'h1, .elementor-widget-theme-post-title, .elementor-page-title, .page-title, .entry-title')) return element;
+    return null;
+  }
+
+  function normalisedHeroText(value) {
+    return (value || '').toLowerCase().replace(/[\u064b-\u065f\u0670]/g, '').replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/[\s\u00a0\-_–—:|]+/g, ' ').trim();
+  }
+
+  function isAccountHeroTitle(value) {
+    var text = normalisedHeroText(value);
+    if (!text) return false;
+    return [
+      'my account', 'account dashboard', 'customer account',
+      'حسابي', 'حساب العميل', 'لوحة حسابي', 'لوحة الحساب', 'حساب المستخدم',
+      'mi cuenta', 'mon compte', 'mein konto', 'il mio account', 'min konto',
+      'minha conta', 'meu cadastro', 'mijn account', 'moj racun', 'moj račun',
+      'моя учетная запись', 'моя учётная запись', 'hesabim', 'hesabım',
+      '我的帐户', '我的账户', 'マイアカウント', '내 계정'
+    ].some(function (title) { return text === normalisedHeroText(title) || text.indexOf(normalisedHeroText(title) + ' ') === 0; });
+  }
+
+  function restoreThemeHero() {
+    Array.prototype.slice.call(document.querySelectorAll('[data-wcas-theme-hero-hidden="1"]')).forEach(function (element) {
+      element.classList.remove('wcas-theme-hero-hidden');
+      element.removeAttribute('data-wcas-theme-hero-hidden');
+    });
+  }
+
+  function hideThemeHeroElement(element) {
+    if (!element || isProtectedThemeChrome(element)) return;
+    element.classList.add('wcas-theme-hero-hidden');
+    element.setAttribute('data-wcas-theme-hero-hidden', '1');
+  }
+
+  function findAccountThemeHero(selector) {
+    var candidate;
+    if (selector) {
+      try {
+        candidate = document.querySelector(selector);
+      } catch (error) {
+        candidate = null;
+      }
+      return heroContainerFor(candidate);
+    }
+    var headings = document.querySelectorAll('h1, [role="heading"][aria-level="1"]');
+    for (var i = 0; i < headings.length; i += 1) {
+      if (isProtectedThemeChrome(headings[i]) || !isAccountHeroTitle(headings[i].textContent)) continue;
+      candidate = heroContainerFor(headings[i]);
+      if (candidate) return candidate;
+    }
+    return null;
+  }
+
+  /* Hides only the account title hero outside Account Studio. A theme-specific
+     selector wins when supplied; otherwise we recognise account titles in the
+     supported interface languages and stop at the nearest hero-like section. */
+  function syncThemeHero(payload) {
+    var enabledValue = firstSetting(payload, ['hideThemeHero', 'hide_theme_hero']);
+    var enabled = typeof enabledValue === 'undefined' ? document.body.classList.contains('wcas-hide-theme-hero') : truthySetting(enabledValue);
+    var selector = safeThemeHeroSelector(payload);
+    document.body.classList.toggle('wcas-hide-theme-hero', enabled);
+    restoreThemeHero();
+    if (!enabled) return;
+    hideThemeHeroElement(findAccountThemeHero(selector));
   }
 
   function mobileMoreSheet() {
@@ -237,13 +453,18 @@
       setClassPrefix(document.body, 'wcas-mobile-labels-', labelsOn ? 'yes' : 'no');
     }
     if (payload.mobileIconStyle) setClassPrefix(document.body, 'wcas-mobile-icons-', payload.mobileIconStyle);
+    if (payload.mobileActiveStyle) setClassPrefix(document.body, 'wcas-mobile-active-', payload.mobileActiveStyle);
     if (payload.mobileIcons) previewMobileIcons(payload.mobileIcons, payload.template);
     if (payload.labels) previewNavigationLabels(payload.labels);
+    if (payload.customLinks) previewCustomLinks(payload.customLinks);
     if (typeof payload.hidePageTitle !== 'undefined') {
       var hidePageTitle = payload.hidePageTitle === true || payload.hidePageTitle === 'yes' || payload.hidePageTitle === '1';
       document.body.classList.toggle('wcas-hide-page-title', hidePageTitle);
       app.classList.toggle('wcas-hide-page-title', hidePageTitle);
       previewThemeTitleVisibility(hidePageTitle);
+    }
+    if (typeof payload.hideThemeHero !== 'undefined' || typeof payload.hide_theme_hero !== 'undefined' || typeof payload.themeHeroSelector !== 'undefined' || typeof payload.theme_hero_selector !== 'undefined') {
+      syncThemeHero(payload);
     }
     if (payload.language) app.setAttribute('dir', payload.language === 'ar' ? 'rtl' : 'ltr');
     if (typeof payload.motion !== 'undefined') {
@@ -299,5 +520,8 @@
     mobileMoreSheet();
     mobileDockExperience();
     previewMessaging();
+    syncThemeHero();
+    /* Some builders finish their page-title markup immediately after DOM ready. */
+    window.setTimeout(function () { syncThemeHero(); }, 180);
   });
 }());

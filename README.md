@@ -4,6 +4,7 @@
 ![WordPress](https://img.shields.io/badge/WordPress-6.5%2B-21759b)
 ![WooCommerce](https://img.shields.io/badge/WooCommerce-8.0%2B-96588a)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777bb4)
+![Languages](https://img.shields.io/badge/languages-7-6C4EA7)
 
 An application-style, mobile-first WooCommerce customer hub that replaces the standard **My Account** view with a complete post-purchase experience.
 
@@ -23,21 +24,23 @@ Woo Account Studio rebuilds that page around the thing the customer actually cam
 
 **Eight customer journeys** — Commerce Hub, Luxury Concierge, Digital Library, Subscription Club, Service & Booking, Beauty & Wellness, Quick Reorder, Trade Portal. Each has its own desktop shell and primary modules — a rail, an editorial header, a tabbed library, a club or business-console treatment — not just alternative colours.
 
+**Seven interface languages** — Arabic, English, Turkish, French, Spanish, German and Italian, bundled with the plugin. The chosen language applies to both the customer hub and Template Studio, independently of the site's global locale; Arabic switches the hub to RTL automatically.
+
 **Order-first overview** — the active order, its current status and its next action come before anything else.
 
 **Full account surface** — custom order centre, order details, digital library, address cards, profile view and support entry point.
 
-**Mobile bottom bar studio** — a four-destination floating dock with 58px touch targets and an accessible "More" bottom sheet. Six genuinely different layouts (Glass, Pill, Split, Solid, Outline, Minimal), floating or edge-attached placement, labels on/off, four icon treatments, and individual icon selection per destination. It never creates a competing mobile drawer and withdraws automatically near the site footer.
+**Mobile bottom bar studio** — a four-destination floating dock with 58px touch targets and an accessible "More" bottom sheet. Eight genuinely different layouts (Glass, Liquid Glass, Midnight, Pill, Split, Solid, Outline, Minimal), floating or edge-attached placement, labels on/off, active-state treatments, four icon treatments, and individual icon selection per destination. It never creates a competing mobile drawer and withdraws automatically near the site footer.
+
+**Persistent merchant links** — up to six links you control, shown in the desktop hub and the mobile More surface, with built-in icons, Iconify icon names, or HTTPS image/SVG URLs.
 
 **Template Studio** — a real iframe preview of the current account page. Template shell, module visibility, brand, palette, layout and motion changes are sent into the preview before saving.
 
 **Design system** — colours, card radius, content width, text scale, sidebar mode, light/dark mode, content modules, labels, support URL, optional motion, and scoped custom CSS.
 
-**Bilingual** — Arabic and English interface modes, automatic RTL layout, and compatibility with the normal WordPress translation workflow.
-
 **Branding** — the site logo by default, or a custom Media Library logo, or initials-only mode.
 
-**Theme title suppression** — an optional switch that removes the oversized My Account title/hero created by common themes and page builders, without touching the hub's own content.
+**Theme hero control** — removes the oversized My Account title or banner that many themes and page builders place above the account content, without touching the hub's own content. An optional, validated selector handles theme-specific banners.
 
 ## Screenshots
 
@@ -85,9 +88,15 @@ Then activate the plugin from **Plugins**.
 3. Adjust brand, palette, modules and the mobile bar, then save.
 4. Open the WooCommerce **My Account** page while logged in to review the live result.
 
+## Translating
+
+Seven languages ship with the plugin as bundled catalogues in `languages/`. To add another language, or to override the bundled wording, use `languages/woo-account-studio.pot` with the normal WordPress translation workflow.
+
 ## Data and privacy
 
-The plugin renders native WooCommerce endpoints and customer data. It does not duplicate orders, downloads or customer records, stores no personal data of its own, and makes no external requests. Settings live in a single `wcas_settings` option, removed on uninstall.
+The plugin renders native WooCommerce endpoints and customer data. It does not duplicate orders, downloads or customer records, and stores no personal data of its own. Settings live in a single `wcas_settings` option, removed on uninstall.
+
+One external request is possible: if a merchant link is configured with an **Iconify** icon, that icon is loaded from `api.iconify.design` on the customer's account page. Built-in icons and self-hosted image URLs make no third-party request.
 
 ## Compatibility
 
